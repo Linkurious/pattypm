@@ -1,5 +1,5 @@
 {
-  "name" : "pattypm",
+  "name": "pattypm",
   "description": "A JavaScript value checker for NodeJS",
   "repository": {
     "type": "git",
@@ -21,9 +21,9 @@
     "pm",
     "patty"
   ],
-  "main" : "./src/Patty.js",
+  "main": "./src/Patty.js",
   "license": "MIT",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": false,
   "engines": {
     "node": "v7.5.0"
