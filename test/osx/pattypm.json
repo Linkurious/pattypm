@@ -1,0 +1,36 @@
+{
+  "port": 4444,
+  "secret": "lol",
+  "name": "Linkurious LKE",
+  "description": "Linkurious is fun",
+  "processOwner": "david",
+  "autoStartServices": true,
+  "services": [
+    {
+      "name": "LKE Service ONE",
+      "binPath": "/usr/local/bin/node",
+      "arguments": [
+        "-e",
+        "setInterval(() => console.log('time' + (new Date).toISOString()), 3000)"
+      ],
+      "env": {}
+    },
+    {
+      "name": "LKE Service TWO",
+      "binPath": "/usr/local/bin/node",
+      "arguments": [
+        "-e",
+        "console.log(\"abc\") paf;"
+      ],
+      "env": {}
+    },
+    {
+      "name": "LKE ElasticSearch",
+      "binPath": "/Users/david/Documents/GraphApps/elastic/bin/elasticsearch",
+      "arguments": [],
+      "env": {
+        "JAVA_HOME": "/usr"
+      }
+    }
+  ]
+}

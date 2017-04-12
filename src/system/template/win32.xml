@@ -1,0 +1,14 @@
+<service>
+  <id>{{label}}.exe</id>
+  <name>{{name}}</name>
+  <description>{{description}}</description>
+  <executable>{{node_path}}</executable>
+  <logmode>rotate</logmode>
+  <argument>--harmony</argument>
+  <argument>{{ppm_server_path}}</argument>
+  <logpath>{{ppm_home_path}}\logs</logpath>
+  <stoptimeout>30sec</stoptimeout>
+  <env name="PPM_CONFIG_PATH" value="{{ppm_config_path}}"/>
+  <env name="NODE_PATH" value="{{ppm_home_path}}"/>
+  <workingdirectory>{{ppm_home_path}}</workingdirectory>
+</service>

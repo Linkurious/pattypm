@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+
+    <key>Label</key>
+    <string>{{label}}.service</string>
+
+    <key>ProgramArguments</key>
+    <array>
+      <string>{{node_path}}</string>
+      <string>{{ppm_server_path}}</string>
+    </array>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+      <key>PPM_CONFIG_PATH</key>
+      <string>{{ppm_config_path}}</string>
+    </dict>
+
+    <key>WorkingDirectory</key>
+    <string>{{ppm_home_path}}</string>
+
+    <key>StandardOutPath</key>
+    <string>{{ppm_home_path}}/logs/{{label}}.out.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>{{ppm_home_path}}/logs/{{label}}.err.log</string>
+
+    <key>UserName</key>
+    <string>{{username}}</string>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+  </dict>
+</plist>

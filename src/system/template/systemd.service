@@ -1,0 +1,16 @@
+[Unit]
+Description={{name}}
+After=network.target remote-fs.target
+
+[Service]
+Type=simple
+User={{username}}
+WorkingDirectory={{ppm_home_path}}
+Environment="PPM_CONFIG_PATH={{ppm_config_path}}"
+ExecStart={{node_path}} {{ppm_server_path}}
+ExecReload={{node_path}} {{ppm_client_path}} restart --from-service
+ExecStop={{node_path}} {{ppm_client_path}} stop --from-service
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

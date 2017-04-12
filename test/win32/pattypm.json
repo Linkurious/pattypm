@@ -1,0 +1,36 @@
+{
+  "port": 4444,
+  "secret": "lol",
+  "name": "Linkurious",
+  "description": "Linkurious is fun",
+  "processOwner": "lol",
+  "autoStartServices": true,
+  "services": [
+    {
+      "name": "Service ONE",
+      "binPath": "C:\\Program Files\\nodejs\\node.exe",
+      "arguments": [
+        "-e",
+        "setInterval(() => console.log('time' + (new Date).toISOString()), 3000)"
+      ],
+      "env": {}
+    },
+    {
+      "name": "Service TWO",
+      "binPath": "C:\\Program Files\\nodejs\\node.exe",
+      "arguments": [
+        "-e",
+        "console.log(\"abc\") paf;"
+      ],
+      "env": {}
+    },
+    {
+      "name": "ElasticSearch",
+      "binPath": "\\\\Mac\\Home\\Documents\\GraphApps\\elastic\\bin\\elasticsearch.bat",
+      "arguments": [],
+      "env": {
+        "JAVA_HOME": "C:\\Program Files\\Java\\jre1.8.0_121"
+      }
+    }
+  ]
+}
