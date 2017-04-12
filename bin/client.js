@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * LINKURIOUS CONFIDENTIAL
+ * LINKURIOUS
  * Copyright Linkurious SAS 2012 - 2017
  *
  * - Created by david on 2017-02-14.
