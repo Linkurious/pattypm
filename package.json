@@ -47,7 +47,7 @@
   "dependencies": {
     "bluebird": "3.4.7",
     "fs-extra": "2.0.0",
-    "valcheck": "1.0.4",
+    "valcheck": "latest",
     "blessed": "0.1.81",
     "tree-kill": "1.1.0",
     "log4js": "1.1.1",
