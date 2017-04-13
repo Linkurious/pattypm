@@ -29,8 +29,8 @@
     "node": "v7.5.0"
   },
   "bin": {
-    "pattypmc": "./bin/client.js",
-    "pattypms": "./bin/server.js"
+    "pattypm": "./bin/client.js",
+    "pattypm-server": "./bin/server.js"
   },
   "files": [
     "bin",
