@@ -316,12 +316,26 @@ class Patty {
    * @returns {Promise<boolean>} true if the server was just killed
    */
   ensureStopped() {
-    return this.client.pingServer({noReject: true, retries: 2}).then(connected => {
-      if (!connected) {
+    return this.isServerStarted(2).then(started => {
+      // manager is not started, skip
+      if (!started) {
         return false;
       }
+
+      // 1) stop all running services
       return this.client.stopServices().then(() => {
-        return this.client.killServer().return(true);
+        return this.system.isInstalled();
+      }).then(installed => {
+
+        // 2.a) if installed as a service, stop system service
+        if (installed) {
+          return this.system.stop();
+        }
+
+        // 2.b) if not installed as a service, kill the manager
+        return this.client.stopServices().then(() => {
+          return this.client.killServer().return(true);
+        });
       });
     });
   }
