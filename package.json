@@ -32,7 +32,7 @@
     "pattypmc": "./bin/client.js",
     "pattypms": "./bin/server.js"
   },
-  "file": [
+  "files": [
     "bin",
     "src"
   ],
