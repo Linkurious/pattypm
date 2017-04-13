@@ -108,11 +108,11 @@ class Patty {
   }
 
   /**
-   * @returns {Promise.<{
+   * @returns {Promise<{
    *   installed: boolean,
    *   started: boolean,
-   *   processOwner?: string,
-   *   services: {name: string, state: ServiceState}[]}
+   *   processOwner: string,
+   *   services: Array<{name: string, state: ServiceState}>}
    * >}
    */
   getStatus() {

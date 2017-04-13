@@ -210,7 +210,7 @@ class Utils {
   /**
    * @param {Readable} stream
    * @param {function(Buffer)} cb
-   * @param {number=1MB} bufferSize (default to 1MB)
+   * @param {number} [bufferSize=1MB] (defaults to 1MB)
    */
   static captureLines(stream, cb, bufferSize) {
     if (!bufferSize) { bufferSize = DEFAULT_LINE_BUFFER_SIZE; }

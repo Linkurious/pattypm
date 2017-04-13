@@ -28,7 +28,7 @@ class Menu {
     this.patty = patty;
 
     /**
-     * @type {{started: boolean, installed: boolean, services: {name: string, state: ServiceState}[]}}
+     * @type {{started: boolean, installed: boolean, services: Array<{name: string, state: ServiceState}>}}
      */
     this.state = {
       started: true,

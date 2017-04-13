@@ -1,10 +1,9 @@
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 
 .idea/
-.idea/*
 
 # Runtime data
 pids
@@ -15,10 +14,10 @@ pids
 lib-cov
 
 # Coverage directory used by tools like istanbul
-coverage
+coverage/
 
 # jsdoc
-jsdoc
+jsdoc/
 
 # nyc test coverage
 .nyc_output
@@ -33,7 +32,7 @@ jsdoc
 build/Release
 
 # Dependency directories
-node_modules
+node_modules/
 jspm_packages
 
 # Optional npm cache directory
