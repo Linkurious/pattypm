@@ -93,12 +93,12 @@ if (require.main === module) {
         });
 
       case 'stop':
-        return p.ensureStopped().then(done => {
+        return p.ensureStopped(fromService).then(done => {
           log('Stop: ' + (done ? 'done' : 'no started'));
         });
 
       case 'restart':
-        return p.ensureStopped().then(stopDone => {
+        return p.ensureStopped(fromService).then(stopDone => {
           return p.ensureStarted(fromService).return(stopDone);
         }).then(stopDone => {
           log('Restart: ' + (stopDone ? 'done' : 'started'));

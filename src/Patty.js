@@ -276,7 +276,7 @@ class Patty {
   }
 
   /**
-   * @param {boolean} [fromService=false]
+   * @param {boolean} [fromService=false] Whether this was called from a service script
    * @returns {Promise<boolean>} true if the server was just started
    */
   ensureStarted(fromService) {
@@ -313,9 +313,10 @@ class Patty {
   }
 
   /**
+   * @param {boolean} [fromService=false] Whether this was called from a service script
    * @returns {Promise<boolean>} true if the server was just killed
    */
-  ensureStopped() {
+  ensureStopped(fromService) {
     return this.isServerStarted(2).then(started => {
       // manager is not started, skip
       if (!started) {
@@ -328,7 +329,7 @@ class Patty {
       }).then(installed => {
 
         // 2.a) if installed as a service, stop system service
-        if (installed) {
+        if (installed && !fromService) {
           return this.system.stop();
         }
 

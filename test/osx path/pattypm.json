@@ -16,6 +16,14 @@
       "env": {}
     },
     {
+      "name": "LKE ElasticSearch",
+      "binPath": "/Users/david/Documents/GraphApps/elastic/bin/elasticsearch",
+      "arguments": [],
+      "env": {
+        "JAVA_HOME": "/usr"
+      }
+    },
+    {
       "name": "LKE Service TWO",
       "binPath": "/usr/local/bin/node",
       "arguments": [
@@ -23,14 +31,6 @@
         "console.log(\"abc\") paf;"
       ],
       "env": {}
-    },
-    {
-      "name": "LKE ElasticSearch",
-      "binPath": "/Users/david/Documents/GraphApps/elastic/bin/elasticsearch",
-      "arguments": [],
-      "env": {
-        "JAVA_HOME": "/usr"
-      }
     }
   ]
 }
