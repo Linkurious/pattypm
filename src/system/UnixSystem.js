@@ -115,13 +115,17 @@ class UnixSystem extends System {
   /**
    * @param {PattyHome} home
    * @param {PattyOptions} options
+   * @param {ClientLogger} logger
    * @protected
    */
-  constructor(home, options) {
+  constructor(home, options, logger) {
     super(home, options);
 
     /** @type {SMConfig} */
     this._config = undefined;
+
+    /** @type {ClientLogger} */
+    this._logger = logger;
   }
 
   /**

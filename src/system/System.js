@@ -130,16 +130,17 @@ class System {
   /**
    * @param {PattyHome} home
    * @param {PattyOptions} options
+   * @param {ClientLogger} logger
    * @returns {System}
    */
-  static makePlatformSpecific(home, options) {
+  static makePlatformSpecific(home, options, logger) {
     const platform = process.platform;
     if (platform === 'linux' || platform === 'darwin') {
       const UnixSystem = require('./UnixSystem');
-      return new UnixSystem(home, options);
+      return new UnixSystem(home, options, logger);
     } else if (platform === 'win32') {
       const WindowsSystem = require('./WindowsSystem');
-      return new WindowsSystem(home, options);
+      return new WindowsSystem(home, options, logger);
     } else {
       throw new Error('No system module for platform "' + platform + '"');
     }

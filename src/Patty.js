@@ -73,7 +73,7 @@ class Patty {
     this.client = new PattyClient(options, this._logger);
 
     /** @type {System} */
-    this.system = System.makePlatformSpecific(home, options);
+    this.system = System.makePlatformSpecific(home, options, this._logger);
 
     /** @type {Menu} */
     this.menu = new Menu(home, options, this);

@@ -27,9 +27,12 @@ class WindowsSystem extends System {
   /**
    * @param {PattyHome} home
    * @param {PattyOptions} options
+   * @param {ClientLogger} logger
    */
-  constructor(home, options) {
+  constructor(home, options, logger) {
     super(home, options);
+    /** @type {ClientLogger} */
+    this._logger = logger;
 
     /** @type {string} */
     this._daemonPath = path.resolve(this.home.dir, 'daemon');
@@ -48,7 +51,11 @@ class WindowsSystem extends System {
     return super.init().then(() => {
 
       // extract network drives mapping
-      Utils.run('net.exe', ['use']).then(std => {
+      return Utils.run('net.exe', ['use']).catch(e => {
+        // if running "net use" fails, skip silently (resolving network-mapped drives is not mandatory)
+        this._logger.warn('Could resolve mapped drives ("net.exe use"). Error: ' + e.message);
+        return {out: ''};
+      }).then(std => {
         let m;
         std.out.trim().split('\r\n').splice(6).map(line => {
           if ((m = /^\s*([A-Z]:)\s+(\\\\[^\s]+).*$/.exec(line)) !== null) {
