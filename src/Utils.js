@@ -257,10 +257,11 @@ class Utils {
    * @param {string} binPath
    * @param {string[]} args
    * @param {object} options
+   * @param {boolean} [hideWindowsConsole=false] Use a wrapper to hide the terminal console on Win32
    * @returns {ChildProcess}
    */
-  static spawn(binPath, args, options) {
-    if (process.platform === 'win32') {
+  static spawn(binPath, args, options, hideWindowsConsole) {
+    if (process.platform === 'win32' && hideWindowsConsole) {
       /*
        * alternative method: generate a patched version of node
        * - https://github.com/nodejs/node/issues/556#issuecomment-271066690

@@ -1,5 +1,5 @@
 /**
- * LINKURIOUS
+ * LINKURIOUS CONFIDENTIAL
  * Copyright Linkurious SAS 2012 - 2017
  *
  * - Created by david on 2017-02-10.
@@ -194,9 +194,11 @@ class PattyService {
         {
           cwd: this.absHome,
           env: this.options.env,
-          argv0: this.options.name,
+          //argv0: this.options.name,
           stdio: ['ignore', 'pipe', 'pipe'], // stdin, stdout, stderr
-          detached: true,
+          detached: false,
+          // uid: undefined,
+          // gid: undefined,
           shell: false
         }
       );
@@ -264,6 +266,10 @@ class PattyService {
    * @private
    */
   _handleAutoRestart(exitCode) {
+    if (this._wantStop) {
+      return;
+    }
+
     const max = this.options.maxRestarts;
 
     if (typeof max !== 'number') {

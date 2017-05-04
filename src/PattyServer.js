@@ -324,7 +324,8 @@ class PattyServer {
         // uid: undefined,
         // gid: undefined,
         shell: false
-      }
+      },
+      true
     );
 
     //noinspection JSUnresolvedFunction
