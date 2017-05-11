@@ -85,13 +85,14 @@ class PattyServer {
     try {
       process.setuid(this.options.processOwner);
     } catch(e) {
-      throw PattyError.other('Could not set process owner', e);
+      // throw PattyError.other()
+      this.logError(`Could not change process owner to "${this.options.processOwner}"`, e);
     }
   }
 
   /**
    * @param {string} message
-   * @param {PattyError} error
+   * @param {Error} error
    */
   logError(message, error) {
     this._logger.error(message, error);
