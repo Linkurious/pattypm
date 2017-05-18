@@ -120,7 +120,8 @@ class Patty {
       installed: this.system.isInstalled(),
       started: this.isServerStarted()
     }).then(result => {
-      if (!result.started) {
+      const whenOffline = (result) => {
+        result.started = false;
         result.processOwner = this.options.processOwner;
         result.services = this.options.services.map(so => ({
           name: so.name,
@@ -131,6 +132,10 @@ class Patty {
           }
         }));
         return result;
+      };
+
+      if (!result.started) {
+        return whenOffline(result);
       }
 
       return this.client.getOptions().then(options => {
@@ -139,6 +144,10 @@ class Patty {
       }).then(s => {
         result.services = s;
         return result;
+      }).catch(e => {
+        this._logger.warn(
+          `getStatus partially failed (${e.message}), assuming the manager went offline.`);
+        return whenOffline(result);
       });
     });
   }

@@ -276,7 +276,6 @@ class Menu {
   }
 
   /**
-   * @returns {Promise}
    * @private
    */
   _doSelectedItemAction() {
@@ -284,13 +283,15 @@ class Menu {
     const menuItem = this._selectedMenuItem();
 
     this._showLoading();
-    return menuItem.action().catch(e => {
+    menuItem.action().catch(e => {
       const pe = PattyError.other('Could not ' + menuItem.name().toLowerCase(), e);
       this.showError(pe);
-    }).finally(() => {
-      this._hideLoading();
     }).then(() => {
-      return this.update();
+      this._hideLoading();
+
+      return this.update().catch(e => {
+        this.patty._debug('Menu update error: ' + e.message);
+      });
     });
   }
 
