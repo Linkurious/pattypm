@@ -247,11 +247,12 @@ class Patty {
 
   /**
    * @param {number} [retries=1]
+   * @param {boolean} [bypassCache=false]
    * @returns {Promise.<boolean|PattyError>}
    */
-  isServerStarted(retries) {
+  isServerStarted(retries, bypassCache) {
     if (retries === undefined) { retries = 1; }
-    return this._tryCache('started', 2000, () => {
+    return this._tryCache('started', bypassCache ? -1 : 2000, () => {
       return this.client.pingServer({noReject: true, retries, timeout: 300, retryDelay: 300});
     });
   }
@@ -259,7 +260,7 @@ class Patty {
   /**
    *
    * @param {string} key
-   * @param {number} maxAge
+   * @param {number} maxAge if < 0, will bypass the cache
    * @param {function(): Promise.<T>} valuePromiseFunction
    * @return {Promise.<T>}
    * @template {T}
@@ -268,7 +269,8 @@ class Patty {
   _tryCache(key, maxAge, valuePromiseFunction) {
     /** @type {{date: Date, promise: Promise, value: *}} */
     let entry = this._cache.get(key);
-    if (entry && (Date.now() - entry.date) <= maxAge) {
+
+    if (maxAge > 0 && entry && (Date.now() - entry.date) <= maxAge) {
       if (entry.promise) {
         return entry.promise;
       } else {
@@ -289,7 +291,7 @@ class Patty {
    * @returns {Promise<boolean>} true if the server was just started
    */
   ensureStarted(fromService) {
-    return this.isServerStarted().then(started => {
+    return this.isServerStarted(undefined, true).then(started => {
       // already started, nothing to do
       if (started) { return false; }
 
