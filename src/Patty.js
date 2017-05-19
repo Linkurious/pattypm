@@ -306,7 +306,7 @@ class Patty {
 
         return p.delay(1500).then(() => {
           return this.client.pingServer({retries: 2, timeout: 1500}).catch(e => {
-            return PattyError.otherP('Linkurious could not be started', e);
+            return PattyError.otherP(this.options.name + ' could not be started', e);
           });
         }).return(true);
       });
