@@ -193,6 +193,7 @@ class PattyServer {
 
           reject(PattyError.other('Could not start HTTP server', err));
         } else {
+          this.log('socket ready');
           resolve(server);
         }
       };
@@ -307,10 +308,11 @@ class PattyServer {
 
   /**
    * @param {PattyHome} home
-   * @param {string} [processName] defaults to "NodeJS"
+   * @param {number} [timeout=500]
    * @returns {Promise}
    */
-  static spawn(home, processName) {
+  static spawn(home, timeout) {
+    if (!timeout) { timeout = 500; }
 
     /** @type {ChildProcess} */
     const childProcess = Utils.spawn(
@@ -318,21 +320,56 @@ class PattyServer {
       [path.resolve(__dirname, '..', 'bin', 'server.js')],
       {
         cwd: process.cwd(),
-        argv0: processName,
+        // argv0: undefined, // process name, set later using process.title
         env: PattyServer.makeHomeEnv(home),
         stdio: 'ignore',
         detached: true,
-        // uid: undefined,
+        // uid: undefined, // process owner, set later using process.setuid()
         // gid: undefined,
         shell: false
       },
       true
     );
 
-    //noinspection JSUnresolvedFunction
-    childProcess.unref();
+    return new Promise((resolve, reject) => {
+      let doneCalled = false;
 
-    return Promise.resolve().delay(500);
+      /**
+       * @param {PattyError} err
+       */
+      const done = (err) => {
+        //console.log('spawn done - err:' + err);
+
+        // guard against multiple calls
+        if (doneCalled) { return; }
+        doneCalled = true;
+
+        //noinspection JSUnresolvedFunction
+        childProcess.unref();
+
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      };
+
+      childProcess.once('close', (code, signal) => {
+        if (code !== undefined && code !== null) {
+          done(PattyError.other(`Manager could not start (code ${code})`))
+        } else if (signal !== undefined && signal !== null) {
+          done(PattyError.other(`Manager could not start (signal ${signal})`))
+        } else {
+          done(PattyError.other('Manager could not start'))
+        }
+      });
+
+      childProcess.once('error', error => {
+        done(PattyError.other('Failed to start manager', error));
+      });
+
+      setTimeout(done, timeout)
+    });
   }
 }
 

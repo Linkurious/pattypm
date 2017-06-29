@@ -16,6 +16,7 @@
       "env": {}
     },
     {
+      "disabled": true,
       "name": "LKE ElasticSearch",
       "binPath": "/Users/david/Documents/GraphApps/elastic/bin/elasticsearch",
       "arguments": [],

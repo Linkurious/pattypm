@@ -302,8 +302,11 @@ class Patty {
           // console.log('(started:no, installed:yes) starting system-service');
           p = this.system.start();
         } else {
-          //console.log('(started:no, installed:no) spawning server');
-          p = PattyServer.spawn(this.home);
+          // console.log('(started:no, installed:no) spawning server');
+          p = PattyServer.spawn(this.home).catch(err => {
+            this._logger.error('Spawn failed', err);
+            return Promise.reject(err);
+          });
         }
 
         return p.delay(1500).then(() => {
