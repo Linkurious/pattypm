@@ -300,13 +300,13 @@ class Patty {
         if (installed && !fromService) {
           // console.log('(started:no, installed:yes) starting system-service');
           p = this.system.start().catch(err => {
-            this._logger.error('Could not start system service', err);
+            this._logger.error('Manager launch failed (as system service)', err);
             return Promise.reject(err);
           });
         } else {
           // console.log('(started:no, installed:no) spawning server');
           p = PattyServer.spawn(this.home).catch(err => {
-            this._logger.error('Spawn failed', err);
+            this._logger.error('Manager launch failed', err);
             return Promise.reject(err);
           });
         }
