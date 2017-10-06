@@ -86,6 +86,42 @@ class System {
   }
 
   /**
+   * @returns {Promise}
+   */
+  install() {
+    return this.checkAdmin(`install ${this.options.name} as a system service`).then(() => {
+      return this.$install();
+    });
+  }
+
+  /**
+   * @returns {Promise}
+   */
+  uninstall() {
+    return this.checkAdmin(`uninstall ${this.options.name} from system services`).then(() => {
+      return this.$uninstall();
+    });
+  }
+
+  /**
+   * @returns {Promise}
+   */
+  start() {
+    return this.checkAdmin(`start the ${this.options.name} system service`).then(() => {
+      return this.$start();
+    });
+  }
+
+  /**
+   * @returns {Promise}
+   */
+  stop() {
+    return this.checkAdmin(`stop the ${this.options.name} system service`).then(() => {
+      return this.$stop();
+    });
+  }
+
+  /**
    * @returns {Promise.<boolean>}
    * @abstract
    */
@@ -95,25 +131,25 @@ class System {
    * @returns {Promise}
    * @abstract
    */
-  install() {}
+  $install() {}
 
   /**
    * @returns {Promise}
    * @abstract
    */
-  uninstall() {}
+  $uninstall() {}
 
   /**
    * @returns {Promise}
    * @abstract
    */
-  start() {}
+  $start() {}
 
   /**
    * @returns {Promise}
    * @abstract
    */
-  stop() {}
+  $stop() {}
 
   /**
    * @returns {Promise.<boolean>}

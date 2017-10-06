@@ -90,27 +90,40 @@ class WindowsSystem extends System {
    * @returns {Promise<boolean>}
    */
   isInstalled() {
+    /*
+    todo: investigate this option and its compatibility across Windows versions
+     @echo off
+     SC QUERY my_service_name > NUL
+     IF ERRORLEVEL 1060 GOTO MISSING
+     ECHO EXISTS
+     GOTO END
+
+     :MISSING
+     ECHO SERVICE MISSING
+
+     :END
+     */
     return Utils.canReadFile(this._daemonPath);
   }
 
   /**
    * @returns {Promise.<boolean>} true if installed, false if already installed
    */
-  install() {
+  $install() {
     return this._createDaemon().then(() => this._install());
   }
 
   /**
    * @returns {Promise}
    */
-  uninstall() {
+  $uninstall() {
     return this._uninstall().then(() => this._deleteDaemon());
   }
 
   /**
    * @returns {Promise}
    */
-  start() {
+  $start() {
     return WindowsSystem.runElevated('net.exe', ['start', this._vars.label + '.exe'])
       .return(true)
       .catch(error => {
@@ -124,7 +137,7 @@ class WindowsSystem extends System {
   /**
    * @returns {Promise}
    */
-  stop() {
+  $stop() {
     return WindowsSystem.runElevated('net.exe', ['stop', this._vars.label + '.exe'])
       .return(true)
       .catch(error => {

@@ -158,7 +158,7 @@ class UnixSystem extends System {
   /**
    * @returns {Promise}
    */
-  install() {
+  $install() {
     return this._createScript().then(() => {
       return Utils.exec(this._config.installCommand);
     });
@@ -167,7 +167,7 @@ class UnixSystem extends System {
   /**
    * @returns {Promise}
    */
-  uninstall() {
+  $uninstall() {
     return Utils.exec(this._config.uninstallCommand).then(() => {
       return Utils.canReadFile(this._config.scriptTarget);
     }).then(exists => {
@@ -184,7 +184,7 @@ class UnixSystem extends System {
   /**
    * @returns {Promise}
    */
-  start() {
+  $start() {
     if (!this._config.startCommand) {
       return Promise.resolve();
     }
@@ -194,7 +194,7 @@ class UnixSystem extends System {
   /**
    * @returns {Promise}
    */
-  stop() {
+  $stop() {
     if (!this._config.stopCommand) {
       return Promise.resolve();
     }

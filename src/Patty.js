@@ -402,6 +402,6 @@ class Patty {
       }).return(true);
     });
   }
-
 }
+
 module.exports = Patty;
