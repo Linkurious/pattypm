@@ -296,6 +296,8 @@ class Patty {
 
       // needs to be started
       return this.system.isInstalled().then(installed => {
+        this._logger.info(`Launching manager (service:${installed} from-service:${fromService})`);
+
         let p;
         if (installed && !fromService) {
           // console.log('(started:no, installed:yes) starting system-service');

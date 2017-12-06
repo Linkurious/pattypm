@@ -14,6 +14,7 @@ const Promise = require('bluebird');
 // local
 const System = require('./System');
 const Utils = require('../Utils');
+const PattyError = require('../PattyError');
 
 /*
  * We support 3 init systems on Linux:
@@ -119,13 +120,10 @@ class UnixSystem extends System {
    * @protected
    */
   constructor(home, options, logger) {
-    super(home, options);
+    super(home, options, logger);
 
     /** @type {SMConfig} */
     this._config = undefined;
-
-    /** @type {ClientLogger} */
-    this._logger = logger;
   }
 
   /**
@@ -159,6 +157,11 @@ class UnixSystem extends System {
    * @returns {Promise}
    */
   $install() {
+    if (!this._vars.username) {
+      return PattyError.businessP(
+        'Cannot install as a service: the process owner must be set'
+      );
+    }
     return this._createScript().then(() => {
       return Utils.exec(this._config.installCommand);
     });

@@ -17,11 +17,15 @@ class System {
   /**
    * @param {PattyHome} home
    * @param {PattyOptions} options
+   * @param {ClientLogger} logger
    * @protected
    */
-  constructor(home, options) {
+  constructor(home, options, logger) {
     this.home = home;
     this.options = options;
+
+    /** @type {ClientLogger} */
+    this._logger = logger;
 
     /** @type {string} */
     this._logPath = path.resolve(this.home.dir, 'logs');
@@ -52,7 +56,7 @@ class System {
       'ppm_server_path': path.resolve(__dirname, '..', '..', 'bin', 'server.js'),
       'ppm_config_path': Utils.getConfigPath(this.home),
       'ppm_home_path': path.resolve(this.home.dir),
-      'username': this.options.processOwner + ''
+      'username': this.options.processOwner || ''
     };
   }
 
@@ -90,7 +94,10 @@ class System {
    */
   install() {
     return this.checkAdmin(`install ${this.options.name} as a system service`).then(() => {
+      this._logger.info(`Installing as a system service (${JSON.stringify(this._vars)})...`);
       return this.$install();
+    }).then(() => {
+      this._logger.info('Installed as a system service (done).');
     });
   }
 
@@ -99,7 +106,10 @@ class System {
    */
   uninstall() {
     return this.checkAdmin(`uninstall ${this.options.name} from system services`).then(() => {
+      this._logger.info(`Uninstalling from system services...`);
       return this.$uninstall();
+    }).then(() => {
+      this._logger.info('Uninstalled from system services (done).');
     });
   }
 
@@ -108,7 +118,10 @@ class System {
    */
   start() {
     return this.checkAdmin(`start the ${this.options.name} system service`).then(() => {
+      this._logger.info(`Starting system service...`);
       return this.$start();
+    }).then(() => {
+      this._logger.info('Started system service (done).');
     });
   }
 
@@ -117,7 +130,10 @@ class System {
    */
   stop() {
     return this.checkAdmin(`stop the ${this.options.name} system service`).then(() => {
+      this._logger.info(`Stopping system service...`);
       return this.$stop();
+    }).then(() => {
+      this._logger.info('Stopped system service (done).');
     });
   }
 

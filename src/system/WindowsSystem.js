@@ -30,9 +30,7 @@ class WindowsSystem extends System {
    * @param {ClientLogger} logger
    */
   constructor(home, options, logger) {
-    super(home, options);
-    /** @type {ClientLogger} */
-    this._logger = logger;
+    super(home, options, logger);
 
     /** @type {string} */
     this._daemonPath = path.resolve(this.home.dir, 'daemon');

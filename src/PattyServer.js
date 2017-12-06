@@ -109,7 +109,7 @@ class PattyServer {
    * @returns {Promise}
    */
   start() {
-    this.log('starting');
+    this.log('starting...');
 
     return Promise.resolve().then(() => {
       this._setProcessOwner();
