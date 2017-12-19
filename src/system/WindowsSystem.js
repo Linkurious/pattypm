@@ -170,7 +170,11 @@ class WindowsSystem extends System {
    */
   static runElevated(cmd, args) {
     args.unshift(cmd);
-    return Utils.run(ELEVATE_PATH, args);
+
+    // workaround to prevent spaces in command, see https://github.com/nodejs/node/issues/7367
+    const relativeElevatePath = path.relative(process.cwd(), ELEVATE_PATH);
+
+    return Utils.run(relativeElevatePath, args);
   }
 
   /**
