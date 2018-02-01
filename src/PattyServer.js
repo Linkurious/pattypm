@@ -290,6 +290,8 @@ class PattyServer {
     if (request.body.secret !== this.options.secret) {
       throw PattyError.protocol('Wrong secret');
     }
+    // not needed anymore after this step, will prevent the secret from being logged.
+    delete request.body.secret;
 
     if (typeof this.controller[action] !== 'function') {
       throw PattyError.protocol(`Action "${action}" does not exist`);
