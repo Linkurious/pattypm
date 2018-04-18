@@ -17,6 +17,7 @@
  * @property {number|undefined} maxRestarts undefined/null:no-restarts, 0:unlimited-restarts, n:max-allow-restarts
  * @property {number|undefined} restartDelay Delay before a auto-restart (default to DEFAULT_RESTART_DELAY)
  * @property {number[]|undefined} noRestartExitCodes List of exit codes that will prevent auto-restart (when auto-restart is enabled)
+ * @property {number|undefined} stopTimeout Number of milliseconds to wait to the process to stop before timing out
  */
 
 /**
@@ -44,6 +45,7 @@ const Utils = require('./Utils');
 
 const WAIT_AFTER_START = 1.5 * 1000;
 const DEFAULT_RESTART_DELAY = 5 * 1000;
+const DEFAULT_STOP_TIMEOUT = 5 * 1000;
 
 class PattyService {
 
@@ -326,27 +328,31 @@ class PattyService {
 
   /**
    * Send a SIGTERM to the process
-   * Resolves when the process terminates, rejects if the process is still running after 2 seconds.
+   * Resolves when the process terminates, rejects if the process is still running after 5 seconds.
+   * The timeout can be customized using options.stopTimeout.
    *
    * @returns {Promise}
    */
   stop() {
+    const timeout = this.options.stopTimeout || DEFAULT_STOP_TIMEOUT;
     return this._stop('SIGTERM').then(() => {
-      // resolve when stopped, or reject after 2 seconds if nothing happens
-      return Utils.resolveWhenTrue(() => !this.state.started, 100, 2000);
+      // resolve when stopped, or reject after 5 seconds if nothing happens
+      return Utils.resolveWhenTrue(() => !this.state.started, 100, timeout);
     });
   }
 
   /**
    * Send a SIGKILL to the process
-   * Resolves when the process terminates, rejects if the process is still running after 2 seconds.
+   * Resolves when the process terminates, rejects if the process is still running after 5 seconds.
+   * The timeout can be customized using options.stopTimeout.
    *
    * @returns {Promise}
    */
   kill() {
+    const timeout = this.options.stopTimeout || DEFAULT_STOP_TIMEOUT;
     return this._stop('SIGKILL').then(() => {
-      // resolve when stopped, or reject after 2 seconds if nothing happens
-      return Utils.resolveWhenTrue(() => !this.state.started, 100, 2000);
+      // resolve when stopped, or reject after 5 seconds if nothing happens
+      return Utils.resolveWhenTrue(() => !this.state.started, 100, timeout);
     });
   }
 }

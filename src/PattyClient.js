@@ -120,7 +120,21 @@ class PattyClient {
    * @returns {Promise}
    */
   stopService(name) {
-    return this._query('stopService', {name: name}, {timeout: 3000});
+    const timeout = this._getServiceStopTimeout(name) + 1000;
+    return this._query('stopService', {name: name}, {timeout: timeout});
+  }
+
+  /**
+   * @param {string} name
+   * @return {number}
+   * @private
+   */
+  _getServiceStopTimeout(name) {
+    /** @type {ServiceOptions} */
+    const service = this.options.services.map(s => s.name === name)[0];
+    return (!service || !service.stopTimeout)
+      ? 5000
+      : service.stopTimeout;
   }
 
   /**

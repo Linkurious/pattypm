@@ -492,6 +492,8 @@ class Utils {
       disabled: {required: false, type: 'boolean'},
       // maxRestarts null/undefined:no-restart 0:unlimited n:max-restarts
       maxRestarts: {required: false, check: 'posInt'},
+      // the process stop timeout must be between 1 second and 5 minute
+      stopTimeout: {required: false, check: ['integer', 1000, 5 * 60 * 1000]},
       restartDelay: {required: false, check: ['integer', 100, 60 * 1000]},
       noRestartExitCodes: {required: false, check: 'intArray'},
       arguments: {required: false, arrayItem: {type: ['string', 'number']}},
