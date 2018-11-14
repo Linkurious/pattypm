@@ -13,7 +13,7 @@ const path = require('path');
 const Promise = require('bluebird');
 const fs = require('fs-extra');
 const Child = require('child_process');
-const Valcheck = require('valcheck');
+const Valcheck = require('valcheck').default;
 const treeKill = require('tree-kill');
 const humanize = require('humanize');
 
