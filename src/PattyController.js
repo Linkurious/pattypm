@@ -203,22 +203,26 @@ class PattyController {
 
   /**
    * @param {object} options
+   * @param {boolean} [options.force]
    * @returns {Promise}
    */
   stopServices(options) {
-    this._emptyOptions(options);
+    Utils.check.properties('options', options, {
+      force: {type: 'boolean'}
+    });
 
     return Promise.map(
       Array.from(this.services.values()),
-      /** @param {PattyService} service */ (service) => {
-        return service.stop();
-      }
+
+      /** @param {PattyService} service */
+      (service) => options.force ? service.kill() : service.stop()
     );
   }
 
   /**
    * @param {object} options
    * @param {string} options.name
+   * @param {string} [options.force]
    * @returns {Promise}
    */
   stopService(options) {
@@ -228,7 +232,7 @@ class PattyController {
     });
 
     const s = this._service(options);
-    return s.stop();
+    return options.force ? s.kill() : s.stop();
   }
 
   /**

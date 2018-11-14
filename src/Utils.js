@@ -352,7 +352,7 @@ class Utils {
 
       const totalDuration = Date.now() - startTime;
       if (totalDuration > timeout) {
-        return reject(PattyError.other(`Did not resolve after ${timeout} ms`));
+        return reject(PattyError.other(`Did not succeed after ${timeout} ms`));
       }
 
       setTimeout(() => check(resolve, reject), interval);
