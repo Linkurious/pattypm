@@ -1,6 +1,6 @@
 {
   "name": "pattypm",
-  "description": "A JavaScript value checker for NodeJS",
+  "description": "A trully cross-platform process manager",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Linkurious/pattypm.git"
