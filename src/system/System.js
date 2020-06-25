@@ -106,7 +106,7 @@ class System {
    */
   uninstall() {
     return this.checkAdmin(`uninstall ${this.options.name} from system services`).then(() => {
-      this._logger.info(`Uninstalling from system services...`);
+      this._logger.info('Uninstalling from system services...');
       return this.$uninstall();
     }).then(() => {
       this._logger.info('Uninstalled from system services (done).');
@@ -118,7 +118,7 @@ class System {
    */
   start() {
     return this.checkAdmin(`start the ${this.options.name} system service`).then(() => {
-      this._logger.info(`Starting system service...`);
+      this._logger.info('Starting system service...');
       return this.$start();
     }).then(() => {
       this._logger.info('Started system service (done).');
@@ -130,7 +130,7 @@ class System {
    */
   stop() {
     return this.checkAdmin(`stop the ${this.options.name} system service`).then(() => {
-      this._logger.info(`Stopping system service...`);
+      this._logger.info('Stopping system service...');
       return this.$stop();
     }).then(() => {
       this._logger.info('Stopped system service (done).');

@@ -145,7 +145,7 @@ class Patty {
         result.services = s;
         return result;
       }).catch(e => {
-        this._logger.error(`getStatus partially failed, assuming the manager went offline.`, e);
+        this._logger.error('getStatus partially failed, assuming the manager went offline.', e);
         return whenOffline(result);
       });
     });
