@@ -40,8 +40,10 @@
     "//": "invoked using >npm run [script-name]",
     "test": "mocha ./test",
     "cover": "istanbul cover --root ./ -i '**/*.js' _mocha",
+    "test:unit": "nyc --reporter=text-summary --reporter=cobertura --report-dir=reports  mocha test",
     "doc": "jsdoc --configure .jsdoc.json",
     "lint": "eslint ./src",
+    "lint:ci": "eslint -f checkstyle -o reports/checkstyle.xml src",
     "patch": "npm version patch && git push && npm publish"
   },
   "dependencies": {
@@ -54,12 +56,13 @@
     "humanize": "0.0.9"
   },
   "devDependencies": {
-    "mocha": "3.0.2",
-    "should": "11.1.0",
     "eslint": "3.9.1",
     "eslint-plugin-import-order": "^2.1.4",
     "ink-docstrap": "1.1.0",
     "istanbul": "~1.1.0-alpha.1",
-    "jsdoc": "3.4.1"
+    "jsdoc": "3.4.1",
+    "mocha": "3.0.2",
+    "nyc": "^15.1.0",
+    "should": "11.1.0"
   }
 }
