@@ -358,11 +358,11 @@ class PattyServer {
 
       childProcess.once('close', (code, signal) => {
         if (code !== undefined && code !== null) {
-          done(PattyError.other(`Manager could not start (code ${code})`))
+          done(PattyError.other(`Manager could not start (code ${code})`));
         } else if (signal !== undefined && signal !== null) {
-          done(PattyError.other(`Manager could not start (signal ${signal})`))
+          done(PattyError.other(`Manager could not start (signal ${signal})`));
         } else {
-          done(PattyError.other('Manager could not start'))
+          done(PattyError.other('Manager could not start'));
         }
       });
 
@@ -370,7 +370,7 @@ class PattyServer {
         done(PattyError.other('Failed to start manager', error));
       });
 
-      setTimeout(done, timeout)
+      setTimeout(done, timeout);
     });
   }
 }
