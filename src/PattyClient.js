@@ -89,7 +89,25 @@ class PattyClient {
    * @returns {Promise}
    */
   stopServices() {
-    return this._query('stopServices', {}, {timeout: this.options.services.length * 3000});
+    return this._query(
+      'stopServices',
+      {},
+      {timeout: this.options.services.length * 3000}
+    ).catch((e) => {
+      e = PattyError.fix(e);
+
+      if (!e.fullMessage.includes('Did not succeed after')) {
+        // no a timeout error, fail here
+        return Promise.reject(e);
+      }
+
+      // retry stopping services with force=true
+      return this._query(
+        'stopServices',
+        {force: true},
+        {timeout: this.options.services.length * 3000}
+      );
+    });
   }
 
   /**

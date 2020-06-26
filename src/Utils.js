@@ -13,7 +13,7 @@ const path = require('path');
 const Promise = require('bluebird');
 const fs = require('fs-extra');
 const Child = require('child_process');
-const Valcheck = require('valcheck');
+const Valcheck = require('valcheck').default;
 const treeKill = require('tree-kill');
 const humanize = require('humanize');
 
@@ -352,7 +352,7 @@ class Utils {
 
       const totalDuration = Date.now() - startTime;
       if (totalDuration > timeout) {
-        return reject(PattyError.other(`Did not resolve after ${timeout} ms`));
+        return reject(PattyError.other(`Did not succeed after ${timeout} ms`));
       }
 
       setTimeout(() => check(resolve, reject), interval);

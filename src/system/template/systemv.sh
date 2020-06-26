@@ -55,7 +55,7 @@ case "$1" in
     stop
     ;;
   reload|force-reload|restart)
-    restart
+    reload
     ;;
   *)
     echo "Usage: $0 start|stop|restart|status" >&2

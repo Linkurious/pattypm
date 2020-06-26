@@ -23,7 +23,7 @@
   ],
   "main": "./src/Patty.js",
   "license": "MIT",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "private": false,
   "engines": {
     "node": ">=7.5.0"
@@ -37,19 +37,18 @@
     "src"
   ],
   "scripts": {
-    "//": "invoked using >npm run [script-name]",
+    "test:unit": "nyc --reporter=text-summary --reporter=cobertura --report-dir=reports  mocha --reporter mocha-junit-reporter --reporter-options mochaFile=./reports/unit/junit-test-results.xml test",
+    "lint:ci": "eslint -f checkstyle -o reports/checkstyle.xml src",
     "test": "mocha ./test",
     "cover": "istanbul cover --root ./ -i '**/*.js' _mocha",
-    "test:unit": "nyc --reporter=text-summary --reporter=cobertura --report-dir=reports  mocha --reporter mocha-junit-reporter --reporter-options mochaFile=./reports/unit/junit-test-results.xml test",
     "doc": "jsdoc --configure .jsdoc.json",
     "lint": "eslint ./src",
-    "lint:ci": "eslint -f checkstyle -o reports/checkstyle.xml src",
     "patch": "npm version patch && git push && npm publish"
   },
   "dependencies": {
     "bluebird": "3.4.7",
     "fs-extra": "2.0.0",
-    "valcheck": "^1.0.8",
+    "valcheck": "1.0.20",
     "blessed": "0.1.81",
     "tree-kill": "1.1.0",
     "log4js": "1.1.1",
@@ -57,13 +56,13 @@
   },
   "devDependencies": {
     "eslint": "3.9.1",
-    "eslint-plugin-import-order": "^2.1.4",
+    "eslint-plugin-import-order": "2.1.4",
     "ink-docstrap": "1.1.0",
-    "istanbul": "~1.1.0-alpha.1",
+    "istanbul": "1.1.0-alpha.1",
     "jsdoc": "3.4.1",
     "mocha": "3.0.2",
-    "mocha-junit-reporter": "^2.0.0",
-    "nyc": "^15.1.0",
+    "mocha-junit-reporter": "2.0.0",
+    "nyc": "15.1.0",
     "should": "11.1.0"
   }
 }
