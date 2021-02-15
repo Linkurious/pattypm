@@ -29,9 +29,9 @@ const TestUtils = {
     //console.log(JSON.stringify(_env))
     const cp = spawn(NODE_PATH, _params, {
       env: _env,
-      stdio: 'pipe'
+      stdio: 'ignore'
     });
-    cp.stdout.on('data', (data) => console.log('   - ' + data.toString().trim()));
+    //cp.stdout.on('data', (data) => console.log('   - ' + data.toString().trim()));
 
     return cp;
   },
