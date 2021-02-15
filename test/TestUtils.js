@@ -12,7 +12,7 @@ const {spawn} = require('child_process');
 const Utils = require('../src/Utils');
 const fs = require('fs-extra');
 
-const NODE_PATH = process.argv[0];
+const NODE_PATH = process.env.NODE || process.argv[0];
 
 const TestUtils = {
   runClient: (configPath, params, env) => {
