@@ -5,4 +5,5 @@ nodeJob {
   projectName = "linkurious/pattyym"
 
   runNpmPublish = true
+
 }
