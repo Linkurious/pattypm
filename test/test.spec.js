@@ -13,7 +13,7 @@ const TestUtils = require('./TestUtils.js');
 describe('Full stack', function() {
 
   it('should pass client env vars to services when cleanEnv=undefined', function(done) {
-    this.timeout(10 * 1000);
+    this.timeout(15 * 1000);
 
     const outFile = path.resolve(__dirname, 'out-t1.txt');
 
@@ -53,7 +53,7 @@ describe('Full stack', function() {
   });
 
   it('should *not* pass client env vars to services when cleanEnv=true', function(done) {
-    this.timeout(10 * 1000);
+    this.timeout(15 * 1000);
 
     const outFile = path.resolve(__dirname, 'out-t2.txt');
 
