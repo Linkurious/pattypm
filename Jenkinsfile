@@ -4,5 +4,7 @@ nodeJob {
   // General
   projectName = "linkurious/pattyym"
 
+  createGitTag = true
+
   runNpmPublish = true
 }
