@@ -15,11 +15,9 @@ const fs = require('fs-extra');
 const NODE_PATH = process.env.NODE || process.argv[0];
 
 const TestUtils = {
-  runClient: (configPath, params, env) => {
-    let _params = [path.resolve(__dirname, '..', 'bin/client.js')];
-    if (params) {
-      _params = _params.concat(params);
-    }
+  runClient: (configPath, command, env) => {
+    const _params = [path.resolve(__dirname, '..', 'bin/client.js')];
+    _params.push(command);
 
     const _env = Object.assign(
       Utils.clone(env ? env : {}),
@@ -31,7 +29,9 @@ const TestUtils = {
       env: _env,
       stdio: 'pipe'
     });
-    cp.stdout.on('data', (data) => console.log('   - ' + data.toString().trim()));
+    cp.stdout.on('data', (data) => console.log(
+      '[' + command + '|' + configPath + '] - ' + data.toString().trim())
+    );
 
     return cp;
   },
@@ -48,14 +48,20 @@ const TestUtils = {
     }
   },
 
-  readDelete: (p) => {
-    try {
-      const s1 = fs.readFileSync(p, 'utf8');
-      fs.unlinkSync(p);
-      return s1;
-    } catch(e) {
-      console.log(e);
-      return undefined;
+  waitReadDelete: (p, done) => {
+    const delay = 1000;
+    if (fs.existsSync(p)) {
+      try {
+        const s1 = fs.readFileSync(p, 'utf8');
+        fs.unlinkSync(p);
+        done(s1);
+      } catch(e) {
+        console.log(e);
+        done(undefined);
+      }
+    } else {
+      console.log('(Retrying to read in ' + delay + 'ms)');
+      setTimeout(() => TestUtils.waitReadDelete(p, done), delay);
     }
   },
 
