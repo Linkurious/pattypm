@@ -7,7 +7,7 @@
 'use strict';
 const process = require('process');
 const path = require('path');
-const {spawn} = require('child_process');
+const {spawn, spawnSync} = require('child_process');
 
 const Utils = require('../src/Utils');
 const fs = require('fs-extra');
@@ -29,11 +29,23 @@ const TestUtils = {
     //console.log(JSON.stringify(_env))
     const cp = spawn(NODE_PATH, _params, {
       env: _env,
-      stdio: 'ignore'
+      stdio: 'pipe'
     });
-    //cp.stdout.on('data', (data) => console.log('   - ' + data.toString().trim()));
+    cp.stdout.on('data', (data) => console.log('   - ' + data.toString().trim()));
 
     return cp;
+  },
+
+  withCleanUp: (configPath, testCase) => {
+    try {
+      testCase();
+    } catch(e) {
+      console.log('Test failed, printing PPM details');
+      TestUtils.catLogs();
+      throw e;
+    } finally {
+      TestUtils.cleanUp(configPath);
+    }
   },
 
   readDelete: (p) => {
@@ -45,6 +57,16 @@ const TestUtils = {
       console.log(e);
       return undefined;
     }
+  },
+
+  catLogs: () => {
+    console.log('cat--start');
+    const c = spawnSync(
+      '/bin/bash',
+      ['-c', 'cat  ' + path.resolve(__dirname, 'logs/*')]
+    );
+    console.log(c.stdout.toString());
+    console.log('cat--end');
   },
 
   makeConfig: (config) => {
