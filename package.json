@@ -37,9 +37,9 @@
     "src"
   ],
   "scripts": {
-    "test:unit": "nyc --reporter=text-summary --reporter=cobertura --report-dir=reports/unit  mocha --reporter mocha-multi-reporters --reporter-options configFile=.test-reporters.json ./test",
+    "test": "nyc --reporter=text-summary --reporter=cobertura --report-dir=reports/unit  mocha --reporter mocha-multi-reporters --reporter-options configFile=.test-reporters.json ./test",
     "lint:ci": "eslint -f checkstyle -o reports/checkstyle.xml src",
-    "test": "mocha ./test",
+    "test:unit": "mocha ./test",
     "cover": "istanbul cover --root ./ -i '**/*.js' _mocha",
     "doc": "jsdoc --configure .jsdoc.json",
     "lint": "eslint ./src",
