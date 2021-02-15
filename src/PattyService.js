@@ -196,7 +196,7 @@ class PattyService {
         this.options.arguments,
         {
           cwd: this.absHome,
-          env:  this.options.cleanEnv
+          env: this.options.cleanEnv
               ? this.options.env
               : Object.assign(Utils.clone(process.env), this.options.env),
           //argv0: this.options.name,
