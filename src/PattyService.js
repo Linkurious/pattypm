@@ -13,6 +13,7 @@
  * @property {Array<string>} arguments
  * @property {string|undefined} home (fi relative, resolve from `pattyHome.dir`)
  * @property {object|undefined} env Environment variables
+ * @property {boolean} [cleanEnv=false] When true, don't inheriting the ENV variables of the manager itself.
  * @property {boolean|undefined} disabled Whether the service is disabled (will not start)
  * @property {number|undefined} maxRestarts undefined/null:no-restarts, 0:unlimited-restarts, n:max-allow-restarts
  * @property {number|undefined} restartDelay Delay before a auto-restart (default to DEFAULT_RESTART_DELAY)
@@ -34,7 +35,7 @@
 
 // builtin
 const path = require('path');
-//const fs = require('fs');
+const process = require('process');
 
 // dependencies
 const Promise = require('bluebird');
@@ -195,7 +196,9 @@ class PattyService {
         this.options.arguments,
         {
           cwd: this.absHome,
-          env: this.options.env,
+          env: this.options.cleanEnv
+              ? this.options.env
+              : Object.assign(Utils.clone(process.env), this.options.env),
           //argv0: this.options.name,
           stdio: ['ignore', 'pipe', 'pipe'], // stdin, stdout, stderr
           detached: false,

@@ -8,6 +8,7 @@
 
 const http = require('http');
 const path = require('path');
+const process = require('process');
 const Promise = require('bluebird');
 
 const Utils = require('./Utils');
@@ -63,11 +64,10 @@ class PattyServer {
 
   /**
    * @param {PattyHome} home
-   * @param {object} [env={}]
    * @returns {object} patched env
    */
-  static makeHomeEnv(home, env) {
-    if (!env) { env = {}; }
+  static makeHomeEnv(home) {
+    let env = Utils.clone(process.env);
     env[Utils.CONFIG_PATH_ENV_KEY] = Utils.getConfigPath(home);
     return env;
   }

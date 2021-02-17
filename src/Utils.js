@@ -498,6 +498,7 @@ class Utils {
       noRestartExitCodes: {required: false, check: 'intArray'},
       arguments: {required: false, arrayItem: {type: ['string', 'number']}},
       env: {required: false, anyProperty: {type: ['string', 'number']}},
+      cleanEnv: {required: false, type: 'boolean'},
       home: {required: false, check: ['dir', home.dir]}
     };
   }
