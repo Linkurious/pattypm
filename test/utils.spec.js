@@ -13,6 +13,15 @@ describe('Test utils', function() {
 
   const Utils = require('../src/Utils');
 
+  describe('clone', function() {
+
+    it('Should clone null, "" and undefined.', function() {
+      should(Utils.clone(undefined)).eql(undefined);
+      should(Utils.clone(null)).eql(null);
+      should(Utils.clone('')).eql('');
+    });
+  });
+
   describe('captureLines', function() {
 
     it('Should handle "\\r\\n" and "\\n" line breaks.', function(done) {

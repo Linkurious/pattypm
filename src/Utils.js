@@ -329,6 +329,10 @@ class Utils {
    * @returns {object}
    */
   static clone(o) {
+    if (!o) {
+      // avoid calling clone on "undefined"
+      return o;
+    }
     return JSON.parse(JSON.stringify(o));
   }
 
