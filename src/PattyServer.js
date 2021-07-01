@@ -76,17 +76,27 @@ class PattyServer {
    * @private
    */
   _setProcessOwner() {
-    // nothing to do for non-posix system
-    if (!process.setuid) { return; }
-
     // no target user to switch to
     if (!this.options.processOwner) { return; }
 
+    // set user-id
+    // nothing to do for non-posix system
+    if (!process.setuid) { return; }
     try {
       process.setuid(this.options.processOwner);
     } catch(e) {
       // throw PattyError.other()
       this.logError(`Could not change process owner to "${this.options.processOwner}"`, e);
+    }
+
+    // set group-id
+    // nothing to do for non-posix system
+    if (!process.setgid) { return; }
+    try {
+      process.setgid(this.options.processOwner);
+    } catch(e) {
+      // throw PattyError.other()
+      this.logError(`Could not change process owner group to "${this.options.processOwner}"`, e);
     }
   }
 
