@@ -7,6 +7,7 @@
 'use strict';
 
 const should = require('should/as-function');
+const os = require('os');
 const EventEmitter = require('events').EventEmitter;
 
 describe('Test utils', function() {
@@ -19,6 +20,18 @@ describe('Test utils', function() {
       should(Utils.clone(undefined)).eql(undefined);
       should(Utils.clone(null)).eql(null);
       should(Utils.clone('')).eql('');
+    });
+  });
+
+  describe('getGID', function() {
+    const username = os.userInfo().username;
+
+    it('Should get the GID of the current user', function() {
+      return should(Utils.getGID(username)).be.eventually.be.a.type('number');
+    });
+
+    it('Should reject when getting the GID of a non-existing user', function() {
+      return should(Utils.getGID('non-existing-user-ever')).be.rejected();
     });
   });
 
