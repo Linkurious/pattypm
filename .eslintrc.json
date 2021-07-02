@@ -9,7 +9,6 @@
     "plugin:import-order/recommended"
   ],
   "parserOptions": {
-    "ecmaVersion": 8,
     "sourceType": "script"
   },
   "plugins": [
