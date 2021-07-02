@@ -74,19 +74,32 @@ class PattyServer {
 
   /**
    * @private
+   * @return {Promise}
    */
-  _setProcessOwner() {
-    // nothing to do for non-posix system
-    if (!process.setuid) { return; }
-
+  async _setProcessOwner() {
     // no target user to switch to
     if (!this.options.processOwner) { return; }
 
+    // set user-id
+    // nothing to do for non-posix system
+    if (!process.setuid) { return; }
     try {
       process.setuid(this.options.processOwner);
     } catch(e) {
       // throw PattyError.other()
       this.logError(`Could not change process owner to "${this.options.processOwner}"`, e);
+    }
+
+    // set group-id
+    // nothing to do for non-posix system
+    if (!process.setgid) { return; }
+    let gid = null;
+    try {
+      gid = await Utils.getGID(this.options.processOwner);
+      process.setgid(gid);
+    } catch(e) {
+      // throw PattyError.other()
+      this.logError(`Could not change process owner group to "${gid}"`, e);
     }
   }
 
@@ -112,8 +125,8 @@ class PattyServer {
     this.log('starting...');
 
     return Promise.resolve().then(() => {
-      this._setProcessOwner();
-
+      return this._setProcessOwner();
+    }).then(() => {
       return this._startWebServer();
     }).then(server => {
       this.server = server;

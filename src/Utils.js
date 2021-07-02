@@ -325,10 +325,26 @@ class Utils {
   }
 
   /**
+   * Get the GroupID of a user.
+   *
+   * @param {string} username
+   * @returns {Promise<number|undefined>}
+   */
+  static async getGID(username) {
+    const r = await Utils.exec(`id -g "${username}"`);
+    const gid = parseInt(r.out);
+    return Number.isNaN(gid) ? undefined : gid;
+  }
+
+  /**
    * @param {object} o
    * @returns {object}
    */
   static clone(o) {
+    if (!o) {
+      // avoid calling clone on "undefined"
+      return o;
+    }
     return JSON.parse(JSON.stringify(o));
   }
 
