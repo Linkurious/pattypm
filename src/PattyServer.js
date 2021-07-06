@@ -80,16 +80,6 @@ class PattyServer {
     // no target user to switch to
     if (!this.options.processOwner) { return; }
 
-    // set user-id
-    // nothing to do for non-posix system
-    if (!process.setuid) { return; }
-    try {
-      process.setuid(this.options.processOwner);
-    } catch(e) {
-      // throw PattyError.other()
-      this.logError(`Could not change process owner to "${this.options.processOwner}"`, e);
-    }
-
     // set group-id
     // nothing to do for non-posix system
     if (!process.setgid) { return; }
@@ -100,6 +90,16 @@ class PattyServer {
     } catch(e) {
       // throw PattyError.other()
       this.logError(`Could not change process owner group to "${gid}"`, e);
+    }
+
+    // set user-id
+    // nothing to do for non-posix system
+    if (!process.setuid) { return; }
+    try {
+      process.setuid(this.options.processOwner);
+    } catch(e) {
+      // throw PattyError.other()
+      this.logError(`Could not change process owner to "${this.options.processOwner}"`, e);
     }
   }
 
