@@ -36,7 +36,7 @@ class WindowsSystem extends System {
     this._daemonPath = path.resolve(this.home.dir, 'daemon');
 
     /** @type {string} */
-    this._exeTarget = path.resolve(this._daemonPath, this._vars.label + '.exe');
+    this._exeTarget = path.resolve(this._daemonPath, this.getTemplateVars().label + '.exe');
 
     /** @type {object<string>} */
     this._networkMapping = {};
@@ -47,6 +47,7 @@ class WindowsSystem extends System {
    */
   init() {
     return super.init().then(() => {
+      const templateVars = this.getTemplateVars();
 
       // extract network drives mapping
       return Utils.run('net.exe', ['use']).catch(e => {
@@ -62,15 +63,15 @@ class WindowsSystem extends System {
         });
       }).then(() => {
 
-        // fix network drive paths in _vars
-        Object.keys(this._vars).forEach(k => {
+        // fix network drive paths in templateVars
+        Object.keys(templateVars).forEach(k => {
           if (k.indexOf('_path') < 0) { return; }
-          let pathValue = this._vars[k];
+          let pathValue = templateVars[k];
           Object.keys(this._networkMapping).forEach(drive => {
             if (pathValue.indexOf(drive) !== 0) { return; }
             // path belongs to drive
             pathValue = pathValue.replace(drive, this._networkMapping[drive]);
-            this._vars[k] = pathValue;
+            templateVars[k] = pathValue;
           });
         });
       });
@@ -122,7 +123,7 @@ class WindowsSystem extends System {
    * @returns {Promise}
    */
   $start() {
-    return WindowsSystem.runElevated('net.exe', ['start', this._vars.label + '.exe'])
+    return WindowsSystem.runElevated('net.exe', ['start', this.getTemplateVars().label + '.exe'])
       .return(true)
       .catch(error => {
         if (error.code === 2 && error.message.indexOf('already been started') >= 0) {
@@ -136,7 +137,7 @@ class WindowsSystem extends System {
    * @returns {Promise}
    */
   $stop() {
-    return WindowsSystem.runElevated('net.exe', ['stop', this._vars.label + '.exe'])
+    return WindowsSystem.runElevated('net.exe', ['stop', this.getTemplateVars().label + '.exe'])
       .return(true)
       .catch(error => {
         if (error.code === 2) {
@@ -185,8 +186,9 @@ class WindowsSystem extends System {
    * @private
    */
   _createDaemon() {
-    const exeConfigTarget = path.resolve(this._daemonPath, this._vars.label + '.exe.config');
-    const scriptTarget = path.resolve(this._daemonPath, this._vars.label + '.xml');
+    const templateVars = this.getTemplateVars();
+    const exeConfigTarget = path.resolve(this._daemonPath, templateVars.label + '.exe.config');
+    const scriptTarget = path.resolve(this._daemonPath, templateVars.label + '.xml');
 
     return Utils.ensureDir(this._daemonPath).then(() => {
       return Utils.copy(WINSW_PATH, this._exeTarget);
@@ -194,8 +196,8 @@ class WindowsSystem extends System {
       return Utils.copy(WINSW_CONFIG_PATH, exeConfigTarget);
     }).then(() => {
       return Utils.readFile(SCRIPT_TEMPLATE_PATH);
-    }).then(template => {
-      return Utils.renderMoustache(template, this._vars);
+    }).then((template) => {
+      return Utils.renderMoustache(template, templateVars);
     }).then(templateBody => {
       return Utils.writeFile(scriptTarget, templateBody.replace(/[\r\n]+/g, '\r\n'));
     });
