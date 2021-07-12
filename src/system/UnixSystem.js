@@ -130,11 +130,20 @@ class UnixSystem extends System {
    * @returns {Promise}
    */
   init() {
+    return super.init().then(() => {
+      return this._refreshConfig();
+    });
+  }
+
+  /**
+   * @returns {Promise}
+   */
+  _refreshConfig() {
     return UnixSystem._getApplicableConfig().then(config => {
       this._config = config;
 
       for (let key of Object.keys(this._config)) {
-        this._config[key] = Utils.renderMoustache(this._config[key], this._vars);
+        this._config[key] = Utils.renderMoustache(this._config[key], this.getTemplateVars());
       }
     });
   }
@@ -157,7 +166,7 @@ class UnixSystem extends System {
    * @returns {Promise}
    */
   $install() {
-    if (!this._vars.username) {
+    if (!this.getTemplateVars().username) {
       return PattyError.businessP(
         'Cannot install as a service: the process owner must be set'
       );
@@ -220,7 +229,7 @@ class UnixSystem extends System {
   _createScriptContent() {
     const templatePath = path.resolve(__dirname, 'template', this._config.template);
     return Utils.readFile(templatePath).then(template => {
-      return Utils.renderMoustache(template, this._vars);
+      return Utils.renderMoustache(template, this.getTemplateVars());
     });
   }
 
