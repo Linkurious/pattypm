@@ -29,9 +29,6 @@ class System {
 
     /** @type {string} */
     this._logPath = path.resolve(this.home.dir, 'logs');
-
-    /** @type {object} */
-    this._vars = this._makeTemplateVars();
   }
 
   /**
@@ -44,9 +41,9 @@ class System {
    *   ppm_home_path: string,
    *   username: string
    * }}
-   * @private
+   * @protected
    */
-  _makeTemplateVars() {
+  getTemplateVars() {
     return {
       'label': this.options.name.toLowerCase().replace(/[^a-z]/g, '').substr(0, 16),
       'name': this.options.name,
@@ -94,7 +91,9 @@ class System {
    */
   install() {
     return this.checkAdmin(`install ${this.options.name} as a system service`).then(() => {
-      this._logger.info(`Installing as a system service (${JSON.stringify(this._vars)})...`);
+      this._logger.info(
+        `Installing as a system service (${JSON.stringify(this.getTemplateVars())})...`
+      );
       return this.$install();
     }).then(() => {
       this._logger.info('Installed as a system service (done).');
