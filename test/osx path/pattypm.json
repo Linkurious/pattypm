@@ -11,18 +11,9 @@
       "binPath": "/usr/local/bin/node",
       "arguments": [
         "-e",
-        "setInterval(() => console.log('time' + (new Date).toISOString()), 3000)"
+        "setInterval(() => console.log('time >> ' + (new Date).toISOString()), 3000)"
       ],
       "env": {}
-    },
-    {
-      "disabled": true,
-      "name": "LKE ElasticSearch",
-      "binPath": "/Users/david/Documents/GraphApps/elastic/bin/elasticsearch",
-      "arguments": [],
-      "env": {
-        "JAVA_HOME": "/usr"
-      }
     },
     {
       "name": "LKE Service TWO",
@@ -32,6 +23,17 @@
         "console.log(\"abc\") paf;"
       ],
       "env": {}
+    },
+    {
+      "disabled": true,
+      "name": "LKE ElasticSearch",
+      "binPath": "/usr/local/bin/watch",
+      "arguments": [
+        "-n 1 echo $TEST_PPM"
+      ],
+      "env": {
+        "TEST_PPM": "lol yes"
+      }
     }
   ]
 }
