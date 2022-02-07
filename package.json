@@ -54,7 +54,7 @@
     "valcheck": "1.0.20",
     "blessed": "0.1.81",
     "tree-kill": "1.2.2",
-    "log4js": "1.1.1",
+    "log4js": "6.4.0",
     "humanize": "0.0.9"
   },
   "devDependencies": {
