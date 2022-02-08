@@ -29,7 +29,7 @@
       "name": "LKE ElasticSearch",
       "binPath": "/usr/local/bin/watch",
       "arguments": [
-        "-n 1 echo $TEST_PPM"
+        "-n 1 echo >$TEST_PPM<"
       ],
       "env": {
         "TEST_PPM": "lol yes"
