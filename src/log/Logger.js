@@ -56,26 +56,35 @@ class Logger {
   init() {
     return Utils.ensureDir(this.logPath).then(() => {
 
-      // create the appender
-      log4js.loadAppender('file');
-      const appender = log4js.appenderMakers.file({
-        filename: this.logName + '.log',
-        maxLogSize: this._maxLogSize,
-        backups: this._maxLogFiles,
-        layout: {type: 'pattern', pattern: '%d{ISO8601} %p %m'},
-        timezoneOffset: 0
-      }, {cwd: this.logPath});
+      // configure a multi-file appender with fileName based on the logger name (categoryName)
+      // log4js.configure() could be called several times, but always with the same config.
+      const log4jsConfig = {
+        appenders: {
+          file: {
+            type: 'multiFile',
+            base: this.logPath,
+            extension: '.log',
+            property: 'categoryName',
+            maxLogSize: this._maxLogSize,
+            backups: this._maxLogFiles,
+            layout: {type: 'pattern', pattern: '%d{ISO8601} %p %m'}
+          },
+          console: {
+            type: 'console'
+          }
+        },
+        categories: {
+          default: {
+            appenders: this._disableConsole ? ['file'] : ['file', 'console'],
+            level: 'DEBUG'
+          }
+        }
+      };
+      log4js.configure(log4jsConfig);
 
-      // create the logger
+      // create the logger (`logName` will be used as the basename for the log file)
       this._logger = log4js.getLogger(this.logName);
-      if (this._disableConsole) {
-        this._logger.removeAllListeners('log');
-      }
 
-      // add the appender to the logger
-      log4js.addAppender(appender, this.logName);
-
-      this.setLevel('DEBUG');
       this._initialized = true;
     });
   }

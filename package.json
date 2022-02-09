@@ -1,6 +1,6 @@
 {
   "name": "pattypm",
-  "description": "A trully cross-platform process manager",
+  "description": "A truly cross-platform process manager",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Linkurious/pattypm.git"
@@ -23,7 +23,7 @@
   ],
   "main": "./src/Patty.js",
   "license": "MIT",
-  "version": "1.0.26",
+  "version": "1.0.27",
   "private": false,
   "engines": {
     "node": ">=7.5.0"
@@ -53,8 +53,8 @@
     "fs-extra": "2.0.0",
     "valcheck": "1.0.20",
     "blessed": "0.1.81",
-    "tree-kill": "1.1.0",
-    "log4js": "1.1.1",
+    "tree-kill": "1.2.2",
+    "log4js": "6.4.1",
     "humanize": "0.0.9"
   },
   "devDependencies": {
