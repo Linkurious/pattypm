@@ -90,12 +90,13 @@ class Patty {
    */
   init() {
     return this.system.init().then(() => {
+      return this._logger.init();
+    }).then(() => {
       // check that the server-logger works
       const logger = new ServerLogger(this.home, this.options);
-      return Promise.props({
-        s: logger.init(),
-        c: this._logger.init()
-      }).return(this);
+      return logger.init();
+    }).then(() => {
+      return this;
     });
   }
 
