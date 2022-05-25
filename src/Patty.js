@@ -90,11 +90,13 @@ class Patty {
    */
   init() {
     return this.system.init().then(() => {
-      return this._logger.init();
-    }).then(() => {
-      // check that the server-logger works
+      // check that the server-logger works (has to be done FIRST)
       const logger = new ServerLogger(this.home, this.options);
       return logger.init();
+    }).then(() => {
+      // init the ClientLogger (has to be done AFTER) so that this logger
+      // config overwrites the one from the server.
+      return this._logger.init();
     }).then(() => {
       return this;
     });
