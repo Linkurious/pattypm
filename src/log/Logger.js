@@ -58,7 +58,7 @@ class Logger {
 
       // configure a multi-file appender with fileName based on the logger name (categoryName)
       // log4js.configure() could be called several times, but always with the same config.
-      let log4jsConfig = {
+      const log4jsConfig = {
         appenders: {
           file: {
             type: 'multiFile',
@@ -80,12 +80,6 @@ class Logger {
           }
         }
       };
-      if (this._disableConsole) {
-        // workaround because categories.default.appenders does not seem to work as expected
-        // via https://linkurious.atlassian.net/browse/LKE-6279
-        log4jsConfig.appenders.console = undefined;
-        log4jsConfig = Utils.clone(log4jsConfig);
-      }
       log4js.configure(log4jsConfig);
 
       // create the logger (`logName` will be used as the basename for the log file)
