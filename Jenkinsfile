@@ -2,7 +2,7 @@
 
 nodeJob {
   // General
-  projectName = "linkurious/pattyym"
+  projectName = "linkurious/pattypm"
 
   gitTagPrefix = 'v'
 
