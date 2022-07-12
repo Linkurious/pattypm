@@ -90,6 +90,22 @@ class Logger {
   }
 
   /**
+   * Flush the logs and close the logger.
+   *
+   * @returns {Promise<void>}
+   */
+  close() {
+    if (!this._logger) {
+      return Promise.resolve();
+    }
+    return new Promise((resolve) => {
+      this._logger.shutdown(() => {
+        resolve();
+      });
+    });
+  }
+
+  /**
    * @param {string} level
    */
   setLevel(level) {

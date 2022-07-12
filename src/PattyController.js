@@ -6,8 +6,6 @@
  */
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
 const Promise = require('bluebird');
 
 const Utils = require('./Utils');
@@ -21,14 +19,16 @@ class PattyController {
    * @param {PattyHome} home
    * @param {PattyOptions} options
    * @param {ServerLogger} logger
+   * @param {function} exitHandler
    */
-  constructor(home, options, logger) {
+  constructor(home, options, logger, exitHandler) {
 
     /** @type {PattyHome} */
     this.home = home;
 
     /** @type {PattyOptions} */
     this.options = options;
+    this.exitHandler = exitHandler;
 
     /** @type {Map<string, PattyService>} */
     this.services = new Map();
@@ -56,6 +56,9 @@ class PattyController {
   }
 
   /**
+   * Stops services & calls this.existHandler.
+   * Cannot reject (will log errors).
+   *
    * @returns {Promise}
    * @private
    */
@@ -63,7 +66,14 @@ class PattyController {
     try {
       this._logger.info('cleanup before exit');
       return this.stopServices({}).catch(e => {
-        this._logger.error('cleanup failed', e);
+        this._logger.error('service cleanup failed', e);
+      }).then(() => {
+        if (this.exitHandler) {
+          // used to stop the http server
+          this.exitHandler();
+        }
+      }).catch((e) => {
+        this._logger.error('server cleanup failed', e);
       });
     } catch(e) {
       this._logger.error('cleanup failed', e);
@@ -253,9 +263,19 @@ class PattyController {
    */
   kill(options) {
     this._emptyOptions(options);
-
-    this._logger.info('goodbye');
-    setTimeout(() => { process.exit(0); }, 1);
+    setTimeout(() => {
+      this._exitHandler().catch(() => {
+        // ignore exitHandler errors
+      }).then(() => {
+        this._logger.info('goodbye');
+        // flush logs to files
+        return this._logger.close();
+      }).finally(() => {
+        // stop the process with exit code 0 (non-error exit)
+        // we keep a 100ms delay because apparently logger.close does not completely flush logs
+        setTimeout(() => process.exit(0), 100);
+      });
+    }, 1);
     return true;
   }
 

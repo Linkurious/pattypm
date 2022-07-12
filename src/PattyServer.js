@@ -12,7 +12,6 @@ const process = require('process');
 const Promise = require('bluebird');
 
 const Utils = require('./Utils');
-const Patty = require('./Patty');
 const PattyError = require('./PattyError');
 const PattyController = require('./PattyController');
 const ServerLogger = require('./log/ServerLogger');
@@ -30,7 +29,6 @@ class PattyServer {
     /** @type {PattyOptions} */
     this.options = options;
 
-    ///** @type {net.Server} */
     /** @type {http.Server} */
     this.server = undefined;
 
@@ -38,7 +36,12 @@ class PattyServer {
     this._logger = new ServerLogger(home, options);
 
     /** @type {PattyController} */
-    this.controller = new PattyController(home, options, this._logger);
+    this.controller = new PattyController(home, options, this._logger, () => {
+      if (this.server) {
+        // close the HTTP server
+        this.server.close();
+      }
+    });
 
     process.title = this.options.name + ' PPM';
   }
@@ -142,7 +145,7 @@ class PattyServer {
         return this.controller.startServices({});
       }
     }).catch(e => {
-      this._logger.error('Could not start', e);
+      this.logError('Could not start', e);
       return Promise.reject(e);
     });
   }
@@ -312,7 +315,7 @@ class PattyServer {
 
     return Promise.resolve().then(() => {
       if (action !== 'ping') {
-        this._logger.info(`action: "${action}" option:${JSON.stringify(request.body.options)}`);
+        this.log(`action: "${action}" option:${JSON.stringify(request.body.options)}`);
       }
       return this.controller[action].call(this.controller, request.body.options);
     }).then(content => ({
