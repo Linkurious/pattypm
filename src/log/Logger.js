@@ -67,7 +67,7 @@ class Logger {
             property: 'categoryName',
             maxLogSize: this._maxLogSize,
             backups: this._maxLogFiles,
-            layout: {type: 'pattern', pattern: '%d{ISO8601} %p %m'}
+            layout: {type: 'pattern', pattern: '%d{ISO8601_WITH_TZ_OFFSET} %p %m'}
           },
           console: {
             type: 'console'

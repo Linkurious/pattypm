@@ -3,6 +3,7 @@
 nodeJob {
   // General
   projectName = "linkurious/pattypm"
+  podTemplateNames = ['jnlp-agent-node']
 
   gitTagPrefix = 'v'
 
@@ -11,4 +12,5 @@ nodeJob {
   createGitTag = true
 
   runNpmPublish = true
+  githubRelease = true
 }
