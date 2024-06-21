@@ -274,7 +274,10 @@ class Utils {
       // "cscript.exe": console application
       binPath = 'wscript.exe';
     }
-    //console.log(binPath + ' --> ' + JSON.stringify(args))
+    // workaround for https://github.com/nodejs/node/issues/52554
+    if (process.platform === 'win32') {
+      options.shell = true;
+    }
     return Child.spawn(binPath, args, options);
   }
 
@@ -306,7 +309,12 @@ class Utils {
    */
   static run(command, args) {
     return new Promise((resolve, reject) => {
-      const child = Child.spawn(command, args, {shell: false});
+      const options = {shell: false};
+      // workaround for https://github.com/nodejs/node/issues/52554
+      if (process.platform === 'win32') {
+        options.shell = true;
+      }
+      const child = Child.spawn(command, args, options);
 
       const std = {out: '', err: ''};
       child.stdout.on('data', chunk => std.out += chunk);
