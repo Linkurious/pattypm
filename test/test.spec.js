@@ -6,8 +6,8 @@
  */
 'use strict';
 
-const path = require('path');
-const should = require('should/as-function');
+const path = require('node:path');
+const assert = require('node:assert');
 const TestUtils = require('./TestUtils.js');
 
 describe('Full stack', function() {
@@ -44,7 +44,7 @@ describe('Full stack', function() {
         // run asserts and clean up
         TestUtils.withCleanUp(configPath, () => {
           // without cleanEnv (LOL1 is passed)
-          should(output).equal('lol1:haha lol2:lol2-value\n');
+          assert.equal(output, 'lol1:haha lol2:lol2-value\n');
         });
 
         done();
@@ -85,7 +85,7 @@ describe('Full stack', function() {
         // run asserts and clean up
         TestUtils.withCleanUp(configPath, () => {
           // with cleanEnv:true (LOL1 is empty)
-          should(output).equal('lol1: lol2:lol2-value\n');
+          assert.equal(output, 'lol1: lol2:lol2-value\n');
         });
 
         done();

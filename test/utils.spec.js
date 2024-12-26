@@ -7,8 +7,8 @@
 'use strict';
 
 const should = require('should/as-function');
-const os = require('os');
-const EventEmitter = require('events').EventEmitter;
+const os = require('node:os');
+const EventEmitter = require('node:events').EventEmitter;
 
 describe('Test utils', function() {
 

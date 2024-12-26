@@ -5,9 +5,9 @@
  * - Created by david on 2020-02-15.
  */
 'use strict';
-const process = require('process');
-const path = require('path');
-const {spawn, spawnSync} = require('child_process');
+const process = require('node:process');
+const path = require('node:path');
+const {spawn, spawnSync} = require('node:child_process');
 
 const Utils = require('../src/Utils');
 const fs = require('fs-extra');
@@ -53,14 +53,14 @@ const TestUtils = {
     if (fs.existsSync(p)) {
       try {
         const s1 = fs.readFileSync(p, 'utf8');
-        fs.unlinkSync(p);
+        Utils.removeSync(p);
         done(s1);
       } catch(e) {
         console.log(e);
         done(undefined);
       }
     } else {
-      console.log('(Retrying to read in ' + delay + 'ms)');
+      console.log(`${p} does not exist yet... (Retrying to read in ` + delay + 'ms)');
       setTimeout(() => TestUtils.waitReadDelete(p, done), delay);
     }
   },
@@ -86,8 +86,8 @@ const TestUtils = {
 
   cleanUp: (configFilePath) => {
     try {
-      fs.removeSync(path.resolve(__dirname, 'logs'));
-      fs.removeSync(configFilePath);
+      Utils.removeSync(path.resolve(__dirname, 'logs'));
+      Utils.removeSync(configFilePath);
     } catch(e) {
       // no op
     }

@@ -7,10 +7,7 @@
 'use strict';
 
 // builtin
-const path = require('path');
-// dependencies
-const Promise = require('bluebird');
-const fs = require('fs-extra');
+const path = require('node:path');
 // local
 const System = require('./System');
 const PattyServer = require('../PattyServer');
@@ -106,7 +103,7 @@ class WindowsSystem extends System {
   }
 
   /**
-   * @returns {Promise.<boolean>} true if installed, false if already installed
+   * @returns {Promise<boolean>} true if installed, false if already installed
    */
   $install() {
     return this._createDaemon().then(() => this._install());
@@ -124,7 +121,7 @@ class WindowsSystem extends System {
    */
   $start() {
     return WindowsSystem.runElevated('net.exe', ['start', this.getTemplateVars().label + '.exe'])
-      .return(true)
+      .then(() => true)
       .catch(error => {
         if (error.code === 2 && error.message.indexOf('already been started') >= 0) {
           return false;
@@ -138,7 +135,7 @@ class WindowsSystem extends System {
    */
   $stop() {
     return WindowsSystem.runElevated('net.exe', ['stop', this.getTemplateVars().label + '.exe'])
-      .return(true)
+      .then(() => true)
       .catch(error => {
         if (error.code === 2) {
           // service was not running
@@ -208,16 +205,18 @@ class WindowsSystem extends System {
    * @private
    */
   _deleteDaemon() {
-    fs.removeSync(this._daemonPath);
+    Utils.removeSync(this._daemonPath);
     return Promise.resolve();
   }
 
   /**
-   * @returns {Promise}
+   * @returns {Promise<void>}
    * @private
    */
   _install() {
-    return WindowsSystem.runElevated(this._exeTarget, ['install']).delay(2000);
+    return WindowsSystem.runElevated(this._exeTarget, ['install']).then(() => {
+      return Utils.resolveIn(2000);
+    });
   }
 
   /**
@@ -225,7 +224,9 @@ class WindowsSystem extends System {
    * @private
    */
   _uninstall() {
-    return WindowsSystem.runElevated(this._exeTarget, ['uninstall']).delay(1000);
+    return WindowsSystem.runElevated(this._exeTarget, ['uninstall']).then(() => {
+      return Utils.resolveIn(1000);
+    });
   }
 
 }

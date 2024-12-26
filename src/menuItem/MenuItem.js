@@ -6,10 +6,7 @@
  */
 'use strict';
 
-const Promise = require('bluebird');
-
 class MenuItem {
-
   /**
    * @param {string} [name]
    */
@@ -62,8 +59,7 @@ class MenuItem {
   }
 
   /**
-   * @returns {Promise}
-   * @abstract
+   * @returns {Promise<void>}
    */
   action() {
     return Promise.resolve();

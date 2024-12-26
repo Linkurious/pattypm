@@ -7,7 +7,7 @@
 'use strict';
 
 // builtin
-const path = require('path');
+const path = require('node:path');
 
 // dependencies
 const log4js = require('log4js');

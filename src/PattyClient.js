@@ -6,10 +6,10 @@
  */
 'use strict';
 
-const http = require('http');
-const Promise = require('bluebird');
+const http = require('node:http');
 
 const PattyError = require('./PattyError');
+const Utils = require('./Utils');
 
 /**
  * @typedef {object} QueryOptions
@@ -32,7 +32,7 @@ class PattyClient {
   /**
    * @param {QueryOptions} [queryOptions]
    * @param {boolean} [queryOptions.noReject=false] Whether to resolve with `false` if the server is offline
-   * @returns {Promise.<boolean|PattyError>}
+   * @returns {Promise<boolean|PattyError>}
    */
   pingServer(queryOptions) {
     if (!queryOptions) { queryOptions = {}; }
@@ -60,7 +60,9 @@ class PattyClient {
    * @returns {Promise}
    */
   killServer() {
-    return this._query('kill', {}, {}).delay(500);
+    return this._query('kill', {}, {}).then(() => {
+      return Utils.resolveIn(500);
+    });
   }
 
   /**
@@ -111,7 +113,7 @@ class PattyClient {
   }
 
   /**
-   * @returns {Promise.<string[]>}
+   * @returns {Promise<string[]>}
    */
   getServices() {
     return this._query('getServices', {});
@@ -119,7 +121,7 @@ class PattyClient {
 
   /**
    * @param {string} name
-   * @returns {Promise.<{options: ServiceOptions, state: ServiceState}>}
+   * @returns {Promise<{options: ServiceOptions, state: ServiceState}>}
    */
   getService(name) {
     return this._query('getService', {name: name});
@@ -170,7 +172,7 @@ class PattyClient {
    * @param {string} action
    * @param {object} actionOptions
    * @param {QueryOptions} [queryOptions]
-   * @returns {Promise.<*>}
+   * @returns {Promise<*>}
    */
   _query(action, actionOptions, queryOptions) {
     if (!queryOptions) { queryOptions = {}; }
@@ -281,9 +283,9 @@ class PattyClient {
   /**
    * @param {number} allowedRetries
    * @param {number} retryDelay
-   * @param {function():Promise.<*>} promiseFunction
+   * @param {function():Promise<*>} promiseFunction
    * @param {number} [doneRetries=0]
-   * @returns {Promise.<*>}
+   * @returns {Promise<*>}
    * @private
    */
   _retry(allowedRetries, retryDelay, promiseFunction, doneRetries) {
@@ -294,7 +296,7 @@ class PattyClient {
       if (doneRetries >= allowedRetries) {
         return Promise.reject(e);
       }
-      return Promise.delay(retryDelay).then(() => {
+      return Utils.resolveIn(retryDelay).then(() => {
         return this._retry(allowedRetries, retryDelay, promiseFunction, doneRetries + 1);
       });
     });

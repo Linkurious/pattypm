@@ -6,8 +6,6 @@
  */
 'use strict';
 
-const Promise = require('bluebird');
-
 const Utils = require('./Utils');
 const PattyError = require('./PattyError');
 const PattyService = require('./PattyService');
@@ -84,10 +82,10 @@ class PattyController {
   /**
    * @returns {Promise}
    */
-  $start() {
-    return Promise.map(this.options.services, serviceOptions => {
+  async $start() {
+    return Promise.all(this.options.services.map((serviceOptions) => {
       return this.addService(serviceOptions);
-    }, {concurrency: 1});
+    }));
   }
 
   /**
@@ -196,19 +194,18 @@ class PattyController {
    * @param {object} options
    * @returns {Promise<number[]>} PIDs
    */
-  startServices(options) {
+  async startServices(options) {
     this._emptyOptions(options);
 
-    return Promise.map(
-      Array.from(this.services.values()),
-      /** @param {PattyService} service */
-      (service) => {
+    return Promise.all(
+      Array.from(this.services.values()).map((service) => {
         return service.start().catch(e => {
           return PattyError.otherP(`Could not start service "${service.options.name}"`, e);
         });
-      },
-      {concurrency: 1}
-    ).filter(n => typeof n === 'number');
+      })
+    ).then((results) => {
+      return results.filter(n => typeof n === 'number');
+    });
   }
 
   /**
@@ -221,11 +218,10 @@ class PattyController {
       force: {type: 'boolean'}
     });
 
-    return Promise.map(
-      Array.from(this.services.values()),
-
-      /** @param {PattyService} service */
-      (service) => options.force ? service.kill() : service.stop()
+    return Promise.all(
+      Array.from(this.services.values()).map(
+        (service) => options.force ? service.kill() : service.stop()
+      )
     );
   }
 

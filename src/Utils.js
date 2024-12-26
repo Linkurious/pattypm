@@ -7,12 +7,12 @@
 'use strict';
 
 // builtin
-const path = require('path');
+const path = require('node:path');
 
 // dependencies
-const Promise = require('bluebird');
 const fs = require('fs-extra');
-const Child = require('child_process');
+const fsp = require('node:fs/promises');
+const Child = require('node:child_process');
 const Valcheck = require('valcheck').default;
 const treeKill = require('tree-kill');
 const humanize = require('humanize');
@@ -20,9 +20,6 @@ const humanize = require('humanize');
 // local
 const PattyError = require('./PattyError');
 
-const UNLINK_P = Promise.promisify(fs.unlink);
-const COPY_P = Promise.promisify(fs.copy);
-const ENSURE_DIR_P = Promise.promisify(fs.ensureDir);
 const DEFAULT_LINE_BUFFER_SIZE = 1024 * 1024;
 const RUN_VBS = path.resolve(__dirname, 'run.vbs');
 const DEFAULT_CONFIG_FILE = 'pattypm.json';
@@ -76,7 +73,7 @@ class Utils {
    * @returns {Promise}
    */
   static ensureDir(dirPath) {
-    return ENSURE_DIR_P(dirPath);
+    return fsp.mkdir(dirPath, {recursive: true, mode: 0o744});
   }
 
   /**
@@ -85,7 +82,7 @@ class Utils {
    * @returns {Promise}
    */
   static copy(source, target) {
-    return COPY_P(source, target);
+    return fsp.cp(source, target, {recursive: true, force: true});
   }
 
   /**
@@ -93,7 +90,7 @@ class Utils {
    * @returns {Promise}
    */
   static unlink(filePath) {
-    return UNLINK_P(filePath);
+    return fsp.unlink(filePath);
   }
 
   /**
@@ -305,7 +302,7 @@ class Utils {
    *
    * @param {string} command
    * @param {string[]} args
-   * @returns {Promise<{out: string, err: string}|PattyError>}
+   * @returns {Promise<{out: string, err: string}, PattyError>}
    */
   static run(command, args) {
     return new Promise((resolve, reject) => {
@@ -552,6 +549,24 @@ class Utils {
     // default values
     if (!options.services) { options.services = []; }
     if (options.autoStartServices === undefined) { options.autoStartServices = true; }
+  }
+
+  /**
+   * Remove a file
+   * @param filePath
+   * @return void
+   */
+  static removeSync(filePath) {
+    fs.removeSync(filePath);
+  }
+
+  /**
+   * Returns a promise resolved in `ms` milliseconds.
+   * @param ms
+   * @returns {Promise<void>}
+   */
+  static resolveIn(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
 

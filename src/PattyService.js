@@ -34,11 +34,8 @@
  */
 
 // builtin
-const path = require('path');
-const process = require('process');
-
-// dependencies
-const Promise = require('bluebird');
+const path = require('node:path');
+const process = require('node:process');
 
 // local
 const PattyError = require('./PattyError');
@@ -142,12 +139,14 @@ class PattyService {
     }
 
     this.state.restarts = 0;
-    return this._start(0).delay(WAIT_AFTER_START);
+    return this._start(0).then((r) => {
+      return Utils.resolveIn(WAIT_AFTER_START).then(() => r);
+    });
   }
 
   /**
    * @param {number} delay
-   * @returns {Promise.<number|null>} PID or null (is disabled)
+   * @returns {Promise<number|null>} PID or null (if disabled)
    * @private
    */
   _start(delay) {
@@ -160,7 +159,7 @@ class PattyService {
       return this._startingPromise;
     }
 
-    return this._startingPromise = Promise.delay(delay).then(() => {
+    return this._startingPromise = Utils.resolveIn(delay).then(() => {
       return this._spawn(absBinPath);
     }).catch(e => {
       this._startingPromise = null;

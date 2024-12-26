@@ -6,8 +6,6 @@
  */
 'use strict';
 
-const Promise = require('bluebird');
-
 const TYPES = {
   communication: 'communication',
   protocol: 'protocol',
@@ -130,7 +128,7 @@ class PattyError extends Error {
   /**
    * @param {string} message
    * @param {Error} [cause]
-   * @returns {Promise.<PattyError>}
+   * @returns {Promise<never, PattyError>}
    */
   static communicationP(message, cause) {
     return Promise.reject(PattyError.communication(message, cause));
@@ -139,7 +137,7 @@ class PattyError extends Error {
   /**
    * @param {string} message
    * @param {Error} [cause]
-   * @returns {Promise.<PattyError>}
+   * @returns {Promise<never, PattyError>}
    */
   static protocolP(message, cause) {
     return Promise.reject(PattyError.protocol(message, cause));
@@ -148,7 +146,7 @@ class PattyError extends Error {
   /**
    * @param {string} message
    * @param {Error} [cause]
-   * @returns {Promise.<PattyError>}
+   * @returns {Promise<never, PattyError>}
    */
   static otherP(message, cause) {
     return Promise.reject(PattyError.other(message, cause));
@@ -157,7 +155,7 @@ class PattyError extends Error {
   /**
    * @param {string} message
    * @param {Error} [cause]
-   * @returns {Promise.<PattyError>}
+   * @returns {Promise<never, PattyError>}
    */
   static businessP(message, cause) {
     return Promise.reject(PattyError.business(message, cause));
