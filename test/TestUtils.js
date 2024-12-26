@@ -10,7 +10,7 @@ const path = require('node:path');
 const {spawn, spawnSync} = require('node:child_process');
 
 const Utils = require('../src/Utils');
-const fs = require('fs-extra');
+const fs = require('node:fs');
 
 const NODE_PATH = process.env.NODE || process.argv[0];
 
@@ -24,13 +24,17 @@ const TestUtils = {
       {PPM_CONFIG_PATH: configPath}
     );
 
-    //console.log(JSON.stringify(_env))
     const cp = spawn(NODE_PATH, _params, {
       env: _env,
       stdio: 'pipe'
     });
+    cp.on('error', (err) => {
+      console.log(
+        Date.now() + ' [ERR: ' + command + '|' + configPath + '] - ' + err.toString()
+      );
+    });
     cp.stdout.on('data', (data) => console.log(
-      '[' + command + '|' + configPath + '] - ' + data.toString().trim())
+      Date.now() + ' [LOG: ' + command + '|' + configPath + '] - ' + data.toString().trim())
     );
 
     return cp;
@@ -53,7 +57,7 @@ const TestUtils = {
     if (fs.existsSync(p)) {
       try {
         const s1 = fs.readFileSync(p, 'utf8');
-        Utils.removeSync(p);
+        fs.unlinkSync(p);
         done(s1);
       } catch(e) {
         console.log(e);
@@ -80,14 +84,14 @@ const TestUtils = {
       __dirname,
       'config-tmp-' + Math.floor(Math.random() * 100000) + '.json'
     );
-    fs.writeJsonSync(filePath, config);
+    fs.writeFileSync(filePath, JSON.stringify(config, null, 2));
     return filePath;
   },
 
   cleanUp: (configFilePath) => {
     try {
-      Utils.removeSync(path.resolve(__dirname, 'logs'));
-      Utils.removeSync(configFilePath);
+      fs.rmSync(path.resolve(__dirname, 'logs'));
+      fs.rmSync(configFilePath);
     } catch(e) {
       // no op
     }

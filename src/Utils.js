@@ -10,7 +10,7 @@
 const path = require('node:path');
 
 // dependencies
-const fs = require('fs-extra');
+const fs = require('node:fs');
 const fsp = require('node:fs/promises');
 const Child = require('node:child_process');
 const Valcheck = require('valcheck').default;
@@ -73,7 +73,7 @@ class Utils {
    * @returns {Promise}
    */
   static ensureDir(dirPath) {
-    return fsp.mkdir(dirPath, {recursive: true, mode: 0o744});
+    return fsp.mkdir(dirPath, {recursive: true, mode: 0o700});
   }
 
   /**
@@ -149,16 +149,14 @@ class Utils {
    * @param {string} filePath
    * @returns {Promise}
    */
-  static ensureFile(filePath) {
-    return new Promise((resolve, reject) => {
-      fs.ensureFile(filePath, (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
+  static async ensureFile(filePath) {
+    const absDirPath = path.dirname(path.resolve(filePath));
+    if (!fs.existsSync(absDirPath)) {
+      await fsp.mkdir(absDirPath, {recursive: true, mode: 0o700});
+    }
+    if (!fs.existsSync(filePath)) {
+      await fsp.open(filePath, 'w', 0o600);
+    }
   }
 
   /**
@@ -557,7 +555,7 @@ class Utils {
    * @return void
    */
   static removeSync(filePath) {
-    fs.removeSync(filePath);
+    fs.rmSync(filePath);
   }
 
   /**
@@ -567,6 +565,16 @@ class Utils {
    */
   static resolveIn(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Returns a promise rejected in `ms` milliseconds with value `error`.
+   * @param ms
+   * @param error the rejection value
+   * @returns {Promise<never>}
+   */
+  static rejectIn(ms, error) {
+    return new Promise((_, reject) => setTimeout(() => reject(error), ms));
   }
 }
 

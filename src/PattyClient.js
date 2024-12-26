@@ -190,9 +190,10 @@ class PattyClient {
     return this._retry(queryOptions.retries, queryOptions.retryDelay, () => {
       // adding a promise timeout because this is longer than supposed to on windows.
 
-      return this
-        ._httpPromise('POST', '/', query, queryOptions.timeout)
-        .timeout(queryOptions.timeout, 'TIMEOUT');
+      return Promise.race([
+        this._httpPromise('POST', '/', query, queryOptions.timeout),
+        Utils.rejectIn(queryOptions.timeout, 'TIMEOUT')
+      ]);
     }).then(response => {
 
       //console.log('RESPONSE(' + action + '): ' + JSON.stringify(response));

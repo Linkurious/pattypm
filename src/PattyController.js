@@ -82,7 +82,7 @@ class PattyController {
   /**
    * @returns {Promise}
    */
-  async $start() {
+  $start() {
     return Promise.all(this.options.services.map((serviceOptions) => {
       return this.addService(serviceOptions);
     }));
@@ -194,7 +194,7 @@ class PattyController {
    * @param {object} options
    * @returns {Promise<number[]>} PIDs
    */
-  async startServices(options) {
+  startServices(options) {
     this._emptyOptions(options);
 
     return Promise.all(
