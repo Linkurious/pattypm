@@ -7,7 +7,7 @@
 'use strict';
 
 const path = require('node:path');
-const assert = require('node:assert');
+const assert = require('node:assert/strict');
 const TestUtils = require('./TestUtils.js');
 
 describe('Full stack', function() {

@@ -356,7 +356,7 @@ class Utils {
    * @param {function():boolean} checkIfOk
    * @param [interval=100]
    * @param [timeout=500]
-   * @return Promise
+   * @return Promise<void>
    */
   static resolveWhenTrue(checkIfOk, interval, timeout) {
     if (interval === undefined) { interval = 100; }

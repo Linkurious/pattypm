@@ -82,10 +82,10 @@ class PattyController {
   /**
    * @returns {Promise}
    */
-  $start() {
-    return Promise.all(this.options.services.map((serviceOptions) => {
-      return this.addService(serviceOptions);
-    }));
+  async $start() {
+    for (const serviceOptions of this.options.services) {
+      await this.addService(serviceOptions);
+    }
   }
 
   /**
@@ -108,7 +108,7 @@ class PattyController {
 
   /**
    * @param {ServiceOptions} options
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   addService(options) {
     Utils.check.properties('options', options, Utils.SERVICE_OPTIONS_PROPERTIES(this.home));
@@ -194,35 +194,38 @@ class PattyController {
    * @param {object} options
    * @returns {Promise<number[]>} PIDs
    */
-  startServices(options) {
+  async startServices(options) {
     this._emptyOptions(options);
 
-    return Promise.all(
-      Array.from(this.services.values()).map((service) => {
-        return service.start().catch(e => {
-          return PattyError.otherP(`Could not start service "${service.options.name}"`, e);
-        });
-      })
-    ).then((results) => {
-      return results.filter(n => typeof n === 'number');
-    });
+    const processIds = [];
+    for (const service of this.services.values()) {
+      const pid = await service.start().catch(e => {
+        return PattyError.otherP(`Could not start service "${service.options.name}"`, e);
+      });
+      if (typeof pid === 'number') {
+        processIds.push(pid);
+      }
+    }
+    return processIds;
   }
 
   /**
    * @param {object} options
    * @param {boolean} [options.force]
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
-  stopServices(options) {
+  async stopServices(options) {
     Utils.check.properties('options', options, {
       force: {type: 'boolean'}
     });
 
-    return Promise.all(
-      Array.from(this.services.values()).map(
-        (service) => options.force ? service.kill() : service.stop()
-      )
-    );
+    for (const service of this.services.values()) {
+      if (options.force) {
+        await service.kill();
+      } else {
+        await service.stop();
+      }
+    }
   }
 
   /**

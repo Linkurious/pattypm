@@ -348,7 +348,7 @@ class PattyService {
    * Resolves when the process terminates, rejects if the process is still running after 5 seconds.
    * The timeout can be customized using options.stopTimeout.
    *
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   kill() {
     const timeout = this.options.stopTimeout || DEFAULT_STOP_TIMEOUT;

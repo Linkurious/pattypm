@@ -6,7 +6,7 @@
  */
 'use strict';
 
-const assert = require('node:assert');
+const assert = require('node:assert/strict');
 const os = require('node:os');
 const EventEmitter = require('node:events').EventEmitter;
 

@@ -51,7 +51,7 @@ class Logger {
   }
 
   /**
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   init() {
     return Utils.ensureDir(this.logPath).then(() => {
