@@ -7,7 +7,7 @@
 'use strict';
 
 // builtin
-const path = require('path');
+const path = require('node:path');
 // local
 const PattyError = require('../PattyError');
 const Utils = require('../Utils');
@@ -59,7 +59,7 @@ class System {
 
   /**
    * @param {string} actionName
-   * @returns {Promise.<undefined|PattyError>}
+   * @returns {Promise<undefined, PattyError>}
    */
   checkAdmin(actionName) {
     const msg = 'You need administrator access to ' + actionName;
@@ -72,14 +72,14 @@ class System {
   }
 
   /**
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   init() {
     return this._ensureLogs();
   }
 
   /**
-   * @returns {Promise}
+   * @returns {Promise<void>}
    * @private
    */
   _ensureLogs() {
@@ -87,7 +87,7 @@ class System {
   }
 
   /**
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   install() {
     return this.checkAdmin(`install ${this.options.name} as a system service`).then(() => {
@@ -101,7 +101,7 @@ class System {
   }
 
   /**
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   uninstall() {
     return this.checkAdmin(`uninstall ${this.options.name} from system services`).then(() => {
@@ -113,7 +113,7 @@ class System {
   }
 
   /**
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   start() {
     return this.checkAdmin(`start the ${this.options.name} system service`).then(() => {
@@ -125,7 +125,7 @@ class System {
   }
 
   /**
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   stop() {
     return this.checkAdmin(`stop the ${this.options.name} system service`).then(() => {
@@ -137,37 +137,37 @@ class System {
   }
 
   /**
-   * @returns {Promise.<boolean>}
+   * @returns {Promise<boolean>}
    * @abstract
    */
   isInstalled() {}
 
   /**
-   * @returns {Promise}
+   * @returns {Promise<boolean>}
    * @abstract
    */
   $install() {}
 
   /**
-   * @returns {Promise}
+   * @returns {Promise<void>}
    * @abstract
    */
   $uninstall() {}
 
   /**
-   * @returns {Promise}
+   * @returns {Promise<void>}
    * @abstract
    */
   $start() {}
 
   /**
-   * @returns {Promise}
+   * @returns {Promise<void>}
    * @abstract
    */
   $stop() {}
 
   /**
-   * @returns {Promise.<boolean>}
+   * @returns {Promise<boolean>}
    * @abstract
    */
   isAdmin() {}

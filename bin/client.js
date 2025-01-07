@@ -9,7 +9,7 @@
 'use strict';
 
 // builtin
-const path = require('path');
+const path = require('node:path');
 // local
 const Patty = require('../src/Patty');
 const PattyError = require('../src/PattyError');
@@ -99,13 +99,13 @@ if (require.main === module) {
 
       case 'restart':
         return p.ensureStopped(fromService).then(stopDone => {
-          return p.ensureStarted(fromService).return(stopDone);
+          return p.ensureStarted(fromService).then(() => stopDone);
         }).then(stopDone => {
           log('Restart: ' + (stopDone ? 'done' : 'started'));
         });
 
       case undefined:
-        return p.showMenu().return('menu');
+        return p.showMenu().then(() => 'menu');
 
       default:
         return PattyError.otherP('Unknown command: "' + action + '"');

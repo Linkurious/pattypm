@@ -6,10 +6,9 @@
  */
 'use strict';
 
-const http = require('http');
-const path = require('path');
-const process = require('process');
-const Promise = require('bluebird');
+const http = require('node:http');
+const path = require('node:path');
+const process = require('node:process');
 
 const Utils = require('./Utils');
 const PattyError = require('./PattyError');
@@ -50,7 +49,7 @@ class PattyServer {
    * @returns {Promise<PattyServer>}
    */
   init() {
-    return this._logger.init().return(this);
+    return this._logger.init().then(() => this);
   }
 
   /**

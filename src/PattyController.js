@@ -6,8 +6,6 @@
  */
 'use strict';
 
-const Promise = require('bluebird');
-
 const Utils = require('./Utils');
 const PattyError = require('./PattyError');
 const PattyService = require('./PattyService');
@@ -84,10 +82,10 @@ class PattyController {
   /**
    * @returns {Promise}
    */
-  $start() {
-    return Promise.map(this.options.services, serviceOptions => {
-      return this.addService(serviceOptions);
-    }, {concurrency: 1});
+  async $start() {
+    for (const serviceOptions of this.options.services) {
+      await this.addService(serviceOptions);
+    }
   }
 
   /**
@@ -110,7 +108,7 @@ class PattyController {
 
   /**
    * @param {ServiceOptions} options
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   addService(options) {
     Utils.check.properties('options', options, Utils.SERVICE_OPTIONS_PROPERTIES(this.home));
@@ -196,37 +194,38 @@ class PattyController {
    * @param {object} options
    * @returns {Promise<number[]>} PIDs
    */
-  startServices(options) {
+  async startServices(options) {
     this._emptyOptions(options);
 
-    return Promise.map(
-      Array.from(this.services.values()),
-      /** @param {PattyService} service */
-      (service) => {
-        return service.start().catch(e => {
-          return PattyError.otherP(`Could not start service "${service.options.name}"`, e);
-        });
-      },
-      {concurrency: 1}
-    ).filter(n => typeof n === 'number');
+    const processIds = [];
+    for (const service of this.services.values()) {
+      const pid = await service.start().catch(e => {
+        return PattyError.otherP(`Could not start service "${service.options.name}"`, e);
+      });
+      if (typeof pid === 'number') {
+        processIds.push(pid);
+      }
+    }
+    return processIds;
   }
 
   /**
    * @param {object} options
    * @param {boolean} [options.force]
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
-  stopServices(options) {
+  async stopServices(options) {
     Utils.check.properties('options', options, {
       force: {type: 'boolean'}
     });
 
-    return Promise.map(
-      Array.from(this.services.values()),
-
-      /** @param {PattyService} service */
-      (service) => options.force ? service.kill() : service.stop()
-    );
+    for (const service of this.services.values()) {
+      if (options.force) {
+        await service.kill();
+      } else {
+        await service.stop();
+      }
+    }
   }
 
   /**

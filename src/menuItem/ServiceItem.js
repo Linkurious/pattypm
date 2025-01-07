@@ -27,8 +27,8 @@ class ServiceItem extends MenuItem {
   visible() {
     return super.visible() &&
       this.menu.state.started &&
-      !this.serviceState.disabled &&
-      this.serviceState !== null;
+      this.serviceState !== null &&
+      !this.serviceState.disabled;
   }
 
   /**

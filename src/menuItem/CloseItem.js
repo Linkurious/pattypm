@@ -6,7 +6,6 @@
  */
 'use strict';
 
-const Promise = require('bluebird');
 const MenuItem = require('./MenuItem');
 
 class CloseItem extends MenuItem {
@@ -16,7 +15,7 @@ class CloseItem extends MenuItem {
   }
 
   /**
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   action() {
     process.exit(0);
