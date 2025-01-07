@@ -6,32 +6,31 @@
  */
 'use strict';
 
-const should = require('should/as-function');
-const os = require('os');
-const EventEmitter = require('events').EventEmitter;
+const assert = require('node:assert/strict');
+const os = require('node:os');
+const EventEmitter = require('node:events').EventEmitter;
 
 describe('Test utils', function() {
-
   const Utils = require('../src/Utils');
 
   describe('clone', function() {
-
     it('Should clone null, "" and undefined.', function() {
-      should(Utils.clone(undefined)).eql(undefined);
-      should(Utils.clone(null)).eql(null);
-      should(Utils.clone('')).eql('');
+      assert.equal(Utils.clone(undefined), undefined);
+      assert.equal(Utils.clone(null), null);
+      assert.equal(Utils.clone(''), '');
     });
   });
 
   describe('getGID', function() {
     const username = os.userInfo().username;
 
-    it('Should get the GID of the current user', function() {
-      return should(Utils.getGID(username)).be.eventually.be.a.type('number');
+    it('Should get the GID of the current user', async function() {
+      const gid = await Utils.getGID(username);
+      assert.equal(typeof gid,  'number');
     });
 
     it('Should reject when getting the GID of a non-existing user', function() {
-      return should(Utils.getGID('non-existing-user-ever')).be.rejected();
+      assert.rejects(() => Utils.getGID('non-existing-user-ever'));
     });
   });
 
@@ -45,15 +44,15 @@ describe('Test utils', function() {
 
       e.emit('data', Buffer.from('abcdefg\n1234'));
       setTimeout(() => {
-        should(lines).eql(['abcdefg']);
+        assert.deepEqual(lines, ['abcdefg']);
 
         e.emit('data', Buffer.from('5\r\nxyz'));
         setTimeout(() => {
-          should(lines).eql(['abcdefg', '12345']);
+          assert.deepEqual(lines, ['abcdefg', '12345']);
 
           e.emit('end');
           setTimeout(() => {
-            should(lines).eql(['abcdefg', '12345', 'xyz']);
+            assert.deepEqual(lines, ['abcdefg', '12345', 'xyz']);
 
             done();
           }, 1);
@@ -69,15 +68,15 @@ describe('Test utils', function() {
 
       e.emit('data', Buffer.from('abcdefg\n1234'));
       setTimeout(() => {
-        should(lines).eql(['abcdefg']);
+        assert.deepEqual(lines, ['abcdefg']);
 
         e.emit('data', Buffer.from('5\r\n'));
         setTimeout(() => {
-          should(lines).eql(['abcdefg', '12345']);
+          assert.deepEqual(lines, ['abcdefg', '12345']);
 
           e.emit('end');
           setTimeout(() => {
-            should(lines).eql(['abcdefg', '12345']);
+            assert.deepEqual(lines, ['abcdefg', '12345']);
 
             done();
           }, 1);
@@ -90,17 +89,17 @@ describe('Test utils', function() {
 
     it('Should render a simple string', function() {
       const r = Utils.renderMoustache('bla', {});
-      should(r).equal('bla');
+      assert.equal(r, 'bla');
     });
 
     it('Should render a template with a var', function() {
       const r = Utils.renderMoustache('bla {{bla}} 123', {bla: 'lol'});
-      should(r).equal('bla lol 123');
+      assert.equal(r, 'bla lol 123');
     });
 
     it('Should render a template with a var twice', function() {
       const r = Utils.renderMoustache('bla {{bla}} 123 {{bla}}', {bla: 'lol'});
-      should(r).equal('bla lol 123 lol');
+      assert.equal(r, 'bla lol 123 lol');
     });
 
   });
@@ -110,7 +109,7 @@ describe('Test utils', function() {
     it('Should execute a valid command with stdout and stderr output', function() {
       const command = 'console.log("a"); process.stderr.write("MESSAGE")';
       return Utils.exec(process.argv[0] + ' -e ' + JSON.stringify(command)).then(std => {
-        should(std).eql({out: 'a\n', err: 'MESSAGE'});
+        assert.deepEqual(std, {out: 'a\n', err: 'MESSAGE'});
       });
     });
 
@@ -120,11 +119,11 @@ describe('Test utils', function() {
       return Utils.exec(process.argv[0] + ' -e ' + JSON.stringify(command)).then(std => {
         ok = true;
       }).catch(e => {
-        should(e.code).equal(1);
-        should(e.killed).equal(false);
+        assert.equal(e.code, 1);
+        assert.equal(e.killed, false);
         ok = false;
       }).then(() => {
-        should(ok).equal(false);
+        assert.equal(ok, false);
       });
     });
 
@@ -135,7 +134,7 @@ describe('Test utils', function() {
     it('Should run a valid command with stdout and stderr output', function() {
       const args = ['-e', 'console.log("a"); process.stderr.write("MESSAGE")'];
       return Utils.run(process.argv[0], args).then(std => {
-        should(std).eql({out: 'a\n', err: 'MESSAGE'});
+        assert.deepEqual(std, {out: 'a\n', err: 'MESSAGE'});
       });
     });
 
@@ -146,10 +145,10 @@ describe('Test utils', function() {
         ok = true;
       }).catch(e => {
         //console.log(e.fullMessage)
-        should(e.code).equal(1);
+        assert.deepEqual(e.code, 1);
         ok = false;
       }).then(() => {
-        should(ok).equal(false);
+        assert.deepEqual(ok, false);
       });
     });
 

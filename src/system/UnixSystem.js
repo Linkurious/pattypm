@@ -8,9 +8,7 @@
 'use strict';
 
 // builtin
-const path = require('path');
-// dependencies
-const Promise = require('bluebird');
+const path = require('node:path');
 // local
 const System = require('./System');
 const Utils = require('../Utils');
@@ -20,7 +18,7 @@ const PattyError = require('../PattyError');
  * We support 3 init systems on Linux:
  * - LaunchD (Mac OSX)
  * - OpenRC (Gentoo)
- * - SystemD (Found in lot of distributions)
+ * - SystemD (Found in lots of distributions)
  * - SystemV (Found in most distributions)
  */
 
@@ -156,7 +154,7 @@ class UnixSystem extends System {
   }
 
   /**
-   * @returns {Promise.<boolean>}
+   * @returns {Promise<boolean>}
    */
   isInstalled() {
     return Utils.canReadFile(this._config.scriptTarget);
@@ -214,7 +212,7 @@ class UnixSystem extends System {
   }
 
   /**
-   * @returns {Promise.<boolean>}
+   * @returns {Promise<boolean>}
    */
   isAdmin() {
     return Promise.resolve(process.getuid() === 0);
@@ -244,7 +242,7 @@ class UnixSystem extends System {
   }
 
   /**
-   * @returns {Promise.<SMConfig>}
+   * @returns {Promise<SMConfig>}
    * @private
    */
   static _getApplicableConfig() {
@@ -267,7 +265,7 @@ class UnixSystem extends System {
   }
 
   /**
-   * @returns {Promise.<boolean>}
+   * @returns {Promise<boolean>}
    * @private
    */
   static _isGentoo() {
@@ -275,7 +273,7 @@ class UnixSystem extends System {
   }
 
   /**
-   * @returns {Promise.<boolean>}
+   * @returns {Promise<boolean>}
    * @private
    */
   static _hasSystemd() {

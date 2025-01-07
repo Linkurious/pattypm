@@ -7,8 +7,6 @@
  */
 'use strict';
 
-const Promise = require('bluebird');
-
 const Utils = require('./Utils');
 const PattyClient = require('./PattyClient');
 const PattyServer = require('./PattyServer');
@@ -115,13 +113,13 @@ class Patty {
    *   installed: boolean,
    *   started: boolean,
    *   processOwner: string,
-   *   services: Array<{name: string, state: ServiceState}>}
-   * >}
+   *   services: Array<{name: string, state: ServiceState}>
+   * }>}
    */
-  getStatus() {
-    return Promise.props({
-      installed: this.system.isInstalled(),
-      started: this.isServerStarted()
+  async getStatus() {
+    return Promise.resolve({
+      installed: await this.system.isInstalled(),
+      started: await this.isServerStarted()
     }).then(result => {
       const whenOffline = (result) => {
         result.started = false;
@@ -156,7 +154,7 @@ class Patty {
 
   /**
    * @param {string} processOwner
-   * @returns {Promise} will reject if the manager is running with at least one started service.
+   * @returns {Promise<void>} will reject if the manager is running with at least one started service.
    */
   setProcessOwner(processOwner) {
     if (this.options.processOwner === processOwner) {
@@ -197,7 +195,7 @@ class Patty {
 
   /**
    * @param {string} name
-   * @return {Promise.<ServiceOptions|PattyError>}
+   * @return {Promise<ServiceOptions|PattyError>}
    */
   getServiceOptions(name) {
     return this.isServerStarted().then(started => {
@@ -250,7 +248,7 @@ class Patty {
   /**
    * @param {number} [retries=1]
    * @param {boolean} [bypassCache=false]
-   * @returns {Promise.<boolean|PattyError>}
+   * @returns {Promise<boolean|PattyError>}
    */
   isServerStarted(retries, bypassCache) {
     if (retries === undefined) { retries = 1; }
@@ -263,9 +261,9 @@ class Patty {
    *
    * @param {string} key
    * @param {number} maxAge if < 0, will bypass the cache
-   * @param {function(): Promise.<T>} valuePromiseFunction
-   * @return {Promise.<T>}
-   * @template {T}
+   * @param {function(): Promise<T>} valuePromiseFunction
+   * @return {Promise<T>}
+   * @template T
    * @private
    */
   _tryCache(key, maxAge, valuePromiseFunction) {
@@ -316,18 +314,19 @@ class Patty {
           });
         }
 
-        return p.delay(1500).then(() => {
+        return p.then(() => {
+          return Utils.resolveIn(1500);
+        }).then(() => {
           return this.client.pingServer({retries: 2, timeout: 1500}).catch(e => {
             return PattyError.otherP(this.options.name + ' could not be started', e);
           });
-        }).return(true);
+        }).then(() => true);
       });
     });
   }
 
   /**
    * @param {string} m
-   * @private
    */
   _debug(m) {
     this._logger.debug(m);
@@ -356,7 +355,7 @@ class Patty {
 
         // 2.b) if not installed as a service, kill the manager
         return this.client.stopServices().then(() => {
-          return this.client.killServer().return(true);
+          return this.client.killServer().then(() => true);
         });
       });
     });
@@ -383,9 +382,9 @@ class Patty {
       }).then(() => {
         return this.system.install().then(() => {
           // start the newly installed service
-          return this.system.start().delay(2000);
+          return this.system.start().then(() => Utils.resolveIn(2000));
         });
-      }).return(true);
+      }).then(() => true);
     });
   }
 
@@ -404,7 +403,7 @@ class Patty {
       // service is installed (stopping and uninstalling)
       return this.ensureStopped().then(() => {
         return this.system.uninstall();
-      }).return(true);
+      }).then(() => true);
     });
   }
 }

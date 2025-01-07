@@ -7,12 +7,12 @@
 'use strict';
 
 // builtin
-const path = require('path');
+const path = require('node:path');
 
 // dependencies
-const Promise = require('bluebird');
-const fs = require('fs-extra');
-const Child = require('child_process');
+const fs = require('node:fs');
+const fsp = require('node:fs/promises');
+const Child = require('node:child_process');
 const Valcheck = require('valcheck').default;
 const treeKill = require('tree-kill');
 const humanize = require('humanize');
@@ -20,9 +20,6 @@ const humanize = require('humanize');
 // local
 const PattyError = require('./PattyError');
 
-const UNLINK_P = Promise.promisify(fs.unlink);
-const COPY_P = Promise.promisify(fs.copy);
-const ENSURE_DIR_P = Promise.promisify(fs.ensureDir);
 const DEFAULT_LINE_BUFFER_SIZE = 1024 * 1024;
 const RUN_VBS = path.resolve(__dirname, 'run.vbs');
 const DEFAULT_CONFIG_FILE = 'pattypm.json';
@@ -76,7 +73,7 @@ class Utils {
    * @returns {Promise}
    */
   static ensureDir(dirPath) {
-    return ENSURE_DIR_P(dirPath);
+    return fsp.mkdir(dirPath, {recursive: true, mode: 0o700});
   }
 
   /**
@@ -85,7 +82,7 @@ class Utils {
    * @returns {Promise}
    */
   static copy(source, target) {
-    return COPY_P(source, target);
+    return fsp.cp(source, target, {recursive: true, force: true});
   }
 
   /**
@@ -93,7 +90,7 @@ class Utils {
    * @returns {Promise}
    */
   static unlink(filePath) {
-    return UNLINK_P(filePath);
+    return fsp.unlink(filePath);
   }
 
   /**
@@ -152,16 +149,14 @@ class Utils {
    * @param {string} filePath
    * @returns {Promise}
    */
-  static ensureFile(filePath) {
-    return new Promise((resolve, reject) => {
-      fs.ensureFile(filePath, (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
+  static async ensureFile(filePath) {
+    const absDirPath = path.dirname(path.resolve(filePath));
+    if (!fs.existsSync(absDirPath)) {
+      await fsp.mkdir(absDirPath, {recursive: true, mode: 0o700});
+    }
+    if (!fs.existsSync(filePath)) {
+      await fsp.open(filePath, 'w', 0o600);
+    }
   }
 
   /**
@@ -305,7 +300,7 @@ class Utils {
    *
    * @param {string} command
    * @param {string[]} args
-   * @returns {Promise<{out: string, err: string}|PattyError>}
+   * @returns {Promise<{out: string, err: string}, PattyError>}
    */
   static run(command, args) {
     return new Promise((resolve, reject) => {
@@ -361,7 +356,7 @@ class Utils {
    * @param {function():boolean} checkIfOk
    * @param [interval=100]
    * @param [timeout=500]
-   * @return Promise
+   * @return Promise<void>
    */
   static resolveWhenTrue(checkIfOk, interval, timeout) {
     if (interval === undefined) { interval = 100; }
@@ -552,6 +547,34 @@ class Utils {
     // default values
     if (!options.services) { options.services = []; }
     if (options.autoStartServices === undefined) { options.autoStartServices = true; }
+  }
+
+  /**
+   * Remove a file
+   * @param filePath
+   * @return void
+   */
+  static removeSync(filePath) {
+    fs.rmSync(filePath);
+  }
+
+  /**
+   * Returns a promise resolved in `ms` milliseconds.
+   * @param ms
+   * @returns {Promise<void>}
+   */
+  static resolveIn(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Returns a promise rejected in `ms` milliseconds with value `error`.
+   * @param ms
+   * @param error the rejection value
+   * @returns {Promise<never>}
+   */
+  static rejectIn(ms, error) {
+    return new Promise((_, reject) => setTimeout(() => reject(error), ms));
   }
 }
 

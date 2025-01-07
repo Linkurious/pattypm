@@ -5,12 +5,12 @@
  * - Created by david on 2020-02-15.
  */
 'use strict';
-const process = require('process');
-const path = require('path');
-const {spawn, spawnSync} = require('child_process');
+const process = require('node:process');
+const path = require('node:path');
+const {spawn, spawnSync} = require('node:child_process');
 
 const Utils = require('../src/Utils');
-const fs = require('fs-extra');
+const fs = require('node:fs');
 
 const NODE_PATH = process.env.NODE || process.argv[0];
 
@@ -24,13 +24,17 @@ const TestUtils = {
       {PPM_CONFIG_PATH: configPath}
     );
 
-    //console.log(JSON.stringify(_env))
     const cp = spawn(NODE_PATH, _params, {
       env: _env,
       stdio: 'pipe'
     });
+    cp.on('error', (err) => {
+      console.log(
+        Date.now() + ' [ERR: ' + command + '|' + configPath + '] - ' + err.toString()
+      );
+    });
     cp.stdout.on('data', (data) => console.log(
-      '[' + command + '|' + configPath + '] - ' + data.toString().trim())
+      Date.now() + ' [LOG: ' + command + '|' + configPath + '] - ' + data.toString().trim())
     );
 
     return cp;
@@ -60,7 +64,7 @@ const TestUtils = {
         done(undefined);
       }
     } else {
-      console.log('(Retrying to read in ' + delay + 'ms)');
+      console.log(`${p} does not exist yet... (Retrying to read in ` + delay + 'ms)');
       setTimeout(() => TestUtils.waitReadDelete(p, done), delay);
     }
   },
@@ -80,14 +84,14 @@ const TestUtils = {
       __dirname,
       'config-tmp-' + Math.floor(Math.random() * 100000) + '.json'
     );
-    fs.writeJsonSync(filePath, config);
+    fs.writeFileSync(filePath, JSON.stringify(config, null, 2));
     return filePath;
   },
 
   cleanUp: (configFilePath) => {
     try {
-      fs.removeSync(path.resolve(__dirname, 'logs'));
-      fs.removeSync(configFilePath);
+      fs.rmSync(path.resolve(__dirname, 'logs'));
+      fs.rmSync(configFilePath);
     } catch(e) {
       // no op
     }

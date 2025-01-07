@@ -11,7 +11,7 @@ const ServicesControlMenuItem = require('./ServicesControlMenuItem');
 class StopItem extends ServicesControlMenuItem {
 
   constructor() {
-    super();
+    super('overwritten');
   }
 
   /**

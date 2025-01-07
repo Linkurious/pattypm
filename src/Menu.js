@@ -7,14 +7,11 @@
 'use strict';
 
 // dependencies
-const Promise = require('bluebird');
 const blessed = require('blessed');
-const humanize = require('humanize');
 // local
 const PattyError = require('./PattyError');
 
 class Menu {
-
   /**
    * @param {PattyHome} home
    * @param {PattyOptions} options
@@ -28,7 +25,12 @@ class Menu {
     this.patty = patty;
 
     /**
-     * @type {{started: boolean, installed: boolean, services: Array<{name: string, state: ServiceState}>}}
+     * @type {{
+     *   started: boolean,
+     *   installed: boolean,
+     *   processOwner: string | null,
+     *   services: Array<{name: string, state: ServiceState}>
+     * }}
      */
     this.state = {
       started: true,
@@ -63,7 +65,6 @@ class Menu {
    * @private
    */
   _addMenuItems() {
-    //const SeparatorItem = require('./menuItem/SeparatorItem');
     const StartItem = require('./menuItem/StartItem');
     const StopItem = require('./menuItem/StopItem');
     const InstallItem = require('./menuItem/InstallItem');
@@ -75,7 +76,6 @@ class Menu {
 
     this.addMenuItem(new StartItem());
     this.addMenuItem(new StopItem());
-    // this.addMenuItem(new SeparatorItem(() => this.state.started));
 
     // individual services control
     this.options.services.forEach(service => {
@@ -253,14 +253,14 @@ class Menu {
       vi: true // Use vi built-in keys
     });
 
-    list.on('select item', (item, seleted) => {
+    list.on('select item', (item, selected) => {
       // update message
-      this._selectedIndex = seleted;
+      this._selectedIndex = selected;
       this._message.setContent(this._getMessage());
     });
 
-    list.on('select', item => {
-      //this._selectedIndex = item.position.top;
+    list.on('select', (_item) => {
+      //this._selectedIndex = _item.position.top;
       this._doSelectedItemAction();
     });
 
@@ -277,6 +277,7 @@ class Menu {
 
   /**
    * @private
+   * @return {void}
    */
   _doSelectedItemAction() {
     /** @type {MenuItem} */
@@ -318,7 +319,7 @@ class Menu {
   }
 
   /**
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   update() {
     return Promise.resolve().then(() => {
@@ -350,18 +351,18 @@ class Menu {
   }
 
   /**
-   * @returns {Promise}
+   * @returns {Promise<void>}
    * @private
    */
   _refreshState() {
-    return this.patty.getStatus().then(state => {
+    return this.patty.getStatus().then((state) => {
       this.state = state;
     });
   }
 
   /**
    * @param {function(MenuItem):boolean|null} [menuFilter=null]
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   show(menuFilter) {
     if (typeof menuFilter === 'function') {
