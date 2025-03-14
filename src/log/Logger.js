@@ -28,6 +28,10 @@ class Logger {
     this.options = options;
     this.logPath = path.resolve(home.dir, 'logs');
     this.logName = Logger.fixName(logName);
+    /**
+     * @type {log4js.Logger|undefined}
+     * @private
+     */
     this._logger = undefined;
     this._initialized = false;
     this._maxLogSize = options.maxLogSize || 5 * 1024 * 1024;
@@ -99,7 +103,7 @@ class Logger {
       return Promise.resolve();
     }
     return new Promise((resolve) => {
-      this._logger.shutdown(() => {
+      log4js.shutdown(() => {
         resolve();
       });
     });
