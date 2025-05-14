@@ -339,7 +339,7 @@ class PattyServer {
         cwd: process.cwd(),
         // argv0: undefined, // process name, set later using process.title
         env: PattyServer.makeHomeEnv(home),
-        stdio: 'ignore',
+        stdio: ['ignore', 'ignore', 'inherit'],
         detached: true,
         // uid: undefined, // process owner, set later using process.setuid()
         // gid: undefined,

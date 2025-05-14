@@ -25,7 +25,7 @@ function handleError(e) {
  * @param {string} data
  */
 function log(data) {
-  console.log(Date.now() + ': ' + data);
+  console.error(Date.now() + ': ' + data);
 }
 
 if (require.main === module) {
