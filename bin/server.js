@@ -8,7 +8,8 @@
  */
 'use strict';
 
-
+const fs = require('node:fs');
+const path = require('node:path');
 const PattyServer = require('../src/PattyServer');
 const PattyError = require('../src/PattyError');
 
@@ -17,15 +18,21 @@ const PattyError = require('../src/PattyError');
  */
 function handleError(e) {
   const pe = PattyError.fix(e);
-  log(pe.fullStack);
+  logStartupError(pe.fullStack);
   process.exit(1);
 }
 
 /**
+ * When the server fails to start before it can initialize its logger fully,
+ * we catch errors here and log them to a special file to help with debugging.
+ *
  * @param {string} data
  */
-function log(data) {
-  console.log(Date.now() + ': ' + data);
+function logStartupError(data) {
+  const Utils = require('../src/Utils');
+  const configDir = path.dirname(process.env[Utils.CONFIG_PATH_ENV_KEY]);
+  const logFilePath = path.resolve(configDir, 'logs', 'startup-error.log');
+  fs.writeFileSync(logFilePath, new Date().toISOString() + ': ' + data + '\n', {flag: 'a'});
 }
 
 if (require.main === module) {
