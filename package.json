@@ -23,7 +23,7 @@
   ],
   "main": "./src/Patty.js",
   "license": "MIT",
-  "version": "1.0.36",
+  "version": "1.0.37",
   "private": false,
   "engines": {
     "node": ">=18.0.0"
