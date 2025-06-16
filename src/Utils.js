@@ -328,6 +328,18 @@ class Utils {
   }
 
   /**
+   * Get the UserID of a user.
+   *
+   * @param {string} username
+   * @returns {Promise<number|undefined>}
+   */
+  static async getUID(username) {
+    const r = await Utils.exec(`id -u "${username}"`);
+    const uid = parseInt(r.out);
+    return Number.isNaN(uid) ? undefined : uid;
+  }
+
+  /**
    * Get the GroupID of a user.
    *
    * @param {string} username

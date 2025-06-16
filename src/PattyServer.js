@@ -78,31 +78,16 @@ class PattyServer {
    * @private
    * @return {Promise}
    */
-  async _setProcessOwner() {
-    // no target user to switch to
-    if (!this.options.processOwner) { return; }
-
-    // set group-id
-    // nothing to do for non-posix system
-    if (!process.setgid) { return; }
-    let gid = null;
-    try {
-      gid = await Utils.getGID(this.options.processOwner);
-      process.setgid(gid);
-    } catch(e) {
-      // throw PattyError.other()
-      this.logError(`Could not change process owner group to "${gid}"`, e);
+  static async resolveUser(processOwner) {
+    // We return an empty value if there is no target user or we're not on a POSIX system.
+    if (!processOwner || !process.setuid) {
+      return {};
     }
 
-    // set user-id
-    // nothing to do for non-posix system
-    if (!process.setuid) { return; }
-    try {
-      process.setuid(this.options.processOwner);
-    } catch(e) {
-      // throw PattyError.other()
-      this.logError(`Could not change process owner to "${this.options.processOwner}"`, e);
-    }
+    return {
+      uid: await Utils.getUID(processOwner),
+      gid: await Utils.getGID(processOwner)
+    };
   }
 
   /**
@@ -127,8 +112,6 @@ class PattyServer {
     this.log('starting...');
 
     return Promise.resolve().then(() => {
-      return this._setProcessOwner();
-    }).then(() => {
       return this._startWebServer();
     }).then(server => {
       this.server = server;
@@ -325,11 +308,14 @@ class PattyServer {
 
   /**
    * @param {PattyHome} home
+   * @param {object} options
    * @param {number} [timeout=500]
    * @returns {Promise}
    */
-  static spawn(home, timeout) {
+  static async spawn(home, options, timeout) {
     if (!timeout) { timeout = 500; }
+
+    const user = await PattyServer.resolveUser(options.processOwner);
 
     /** @type {ChildProcess} */
     const childProcess = Utils.spawn(
@@ -341,8 +327,8 @@ class PattyServer {
         env: PattyServer.makeHomeEnv(home),
         stdio: 'ignore',
         detached: true,
-        // uid: undefined, // process owner, set later using process.setuid()
-        // gid: undefined,
+        uid: user.uid,
+        gid: user.gid,
         shell: false
       },
       true

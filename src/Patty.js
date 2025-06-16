@@ -308,7 +308,7 @@ class Patty {
           });
         } else {
           // console.log('(started:no, installed:no) spawning server');
-          p = PattyServer.spawn(this.home).catch(err => {
+          p = PattyServer.spawn(this.home, this.options).catch(err => {
             this._logger.error('Manager launch failed', err);
             return Promise.reject(err);
           });
