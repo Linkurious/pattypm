@@ -48,8 +48,10 @@ class PattyServer {
   /**
    * @returns {Promise<PattyServer>}
    */
-  init() {
-    return this._logger.init().then(() => this);
+  async init() {
+    await this._setProcessOwner();
+    await this._logger.init();
+    return this;
   }
 
   /**
@@ -90,8 +92,7 @@ class PattyServer {
       gid = await Utils.getGID(this.options.processOwner);
       process.setgid(gid);
     } catch(e) {
-      // throw PattyError.other()
-      this.logError(`Could not change process owner group to "${gid}"`, e);
+      throw PattyError.other(`Could not change process owner group to "${gid}"`, e);
     }
 
     // set user-id
@@ -100,8 +101,7 @@ class PattyServer {
     try {
       process.setuid(this.options.processOwner);
     } catch(e) {
-      // throw PattyError.other()
-      this.logError(`Could not change process owner to "${this.options.processOwner}"`, e);
+      throw PattyError.other(`Could not change process owner to "${this.options.processOwner}"`, e);
     }
   }
 
@@ -127,8 +127,6 @@ class PattyServer {
     this.log('starting...');
 
     return Promise.resolve().then(() => {
-      return this._setProcessOwner();
-    }).then(() => {
       return this._startWebServer();
     }).then(server => {
       this.server = server;
