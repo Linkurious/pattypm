@@ -61,7 +61,7 @@ const CONFIG = {
   systemd: {
     name: 'Systemd',
     template: 'systemd.service',
-    scriptTarget: '/lib/systemd/system/{{label}}.service',
+    scriptTarget: '/etc/systemd/system/{{label}}.service',
     mode: 0o644,
 
     startCommand: 'systemctl start {{label}}',
@@ -277,7 +277,7 @@ class UnixSystem extends System {
    * @private
    */
   static _hasSystemd() {
-    return Utils.exec('systemd --version').then(std => !!std.out.length).catch(() => false);
+    return Utils.exec('systemctl --version').then(std => !!std.out.length).catch(() => false);
   }
 
 }
