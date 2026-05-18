@@ -272,6 +272,11 @@ class Utils {
     // workaround for https://github.com/nodejs/node/issues/52554
     if (process.platform === 'win32') {
       options.shell = true;
+
+      if(binPath.includes(' ')) {
+        // if the command contains spaces, it must be quoted to be properly parsed by the shell
+        binPath = `"${binPath}"`;
+      }
     }
     return Child.spawn(binPath, args, options);
   }
@@ -308,6 +313,10 @@ class Utils {
       // workaround for https://github.com/nodejs/node/issues/52554
       if (process.platform === 'win32') {
         options.shell = true;
+        if(command.includes(' ')) {
+          // if the command contains spaces, it must be quoted to be properly parsed by the shell
+          command = `"${command}"`;
+        }
       }
       const child = Child.spawn(command, args, options);
 
