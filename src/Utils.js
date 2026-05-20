@@ -256,31 +256,22 @@ class Utils {
    * @returns {ChildProcess}
    */
   static spawn(binPath, args, options, hideWindowsConsole) {
-    if (process.platform === 'win32' && hideWindowsConsole) {
-      /*
-       * alternative method: generate a patched version of node
-       * - https://github.com/nodejs/node/issues/556#issuecomment-271066690
-       * - https://github.com/ukoloff/nvms/blob/master/src/tools/nodew.coffee
-       */
-
-      // quote binPath if it contains spaces, since it will be passed as an argument to wscript.exe
-      if (binPath.includes(' ')) {
-        binPath = `"${binPath}"`;
-      }
-      args = [RUN_VBS, binPath].concat(args);
-
-      // "wscript.exe": window application
-      // "cscript.exe": console application
-      binPath = 'wscript.exe';
-    }
-    // workaround for https://github.com/nodejs/node/issues/52554
     if (process.platform === 'win32') {
+      if (hideWindowsConsole) {
+        // Use wscript.exe to hide the terminal console window
+        // https://github.com/nodejs/node/issues/556#issuecomment-271066690
+        args = [RUN_VBS, binPath].concat(args);
+        binPath = 'wscript.exe';
+      }
+
+      // workaround for https://github.com/nodejs/node/issues/52554
       options.shell = true;
 
+      // quote command and args containing spaces for cmd.exe
       if (binPath.includes(' ')) {
-        // if the command contains spaces, it must be quoted to be properly parsed by the shell
         binPath = `"${binPath}"`;
       }
+      args = args.map(a => String(a).includes(' ') ? `"${a}"` : String(a));
     }
     return Child.spawn(binPath, args, options);
   }
@@ -321,8 +312,11 @@ class Utils {
           // if the command contains spaces, it must be quoted to be properly parsed by the shell
           command = `"${command}"`;
         }
-        // quote any arguments that contain spaces so they are not split by the shell
-        args = args.map(arg => arg.includes(' ') ? `"${arg}"` : arg);
+        // quote any args that contain spaces so they are properly parsed by cmd.exe
+        args = args.map(arg => {
+          arg = String(arg);
+          return arg.includes(' ') ? `"${arg}"` : arg;
+        });
       }
       const child = Child.spawn(command, args, options);
 
