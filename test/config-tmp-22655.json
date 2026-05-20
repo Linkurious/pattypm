@@ -1,0 +1,21 @@
+{
+  "port": 4302,
+  "secret": "lol",
+  "name": "PPM test",
+  "description": "testing PPM",
+  "autoStartServices": true,
+  "services": [
+    {
+      "name": "Service ONE",
+      "binPath": "/bin/bash",
+      "cleanEnv": true,
+      "arguments": [
+        "-c",
+        "echo lol1:$LOL1 lol2:$LOL2 > /home/runner/work/pattypm/pattypm/test/out-t2.txt"
+      ],
+      "env": {
+        "LOL2": "lol2-value"
+      }
+    }
+  ]
+}

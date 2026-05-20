@@ -317,6 +317,8 @@ class Utils {
           // if the command contains spaces, it must be quoted to be properly parsed by the shell
           command = `"${command}"`;
         }
+        // quote any arguments that contain spaces so they are not split by the shell
+        args = args.map(arg => arg.includes(' ') ? `"${arg}"` : arg);
       }
       const child = Child.spawn(command, args, options);
 
