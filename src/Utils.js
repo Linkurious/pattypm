@@ -263,6 +263,10 @@ class Utils {
        * - https://github.com/ukoloff/nvms/blob/master/src/tools/nodew.coffee
        */
 
+      // quote binPath if it contains spaces, since it will be passed as an argument to wscript.exe
+      if (binPath.includes(' ')) {
+        binPath = `"${binPath}"`;
+      }
       args = [RUN_VBS, binPath].concat(args);
 
       // "wscript.exe": window application
