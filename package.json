@@ -25,6 +25,9 @@
   "license": "MIT",
   "version": "1.0.39",
   "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=18.0.0"
   },
