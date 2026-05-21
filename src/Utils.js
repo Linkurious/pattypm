@@ -249,6 +249,20 @@ class Utils {
   }
 
   /**
+   * For strings or string arrays.
+   * Quote strings that contain spaces.
+   * @param {string|string[]} stringOrArray
+   * @returns {string|string[]}
+   */
+  static lazyQuotes(stringOrArray) {
+    if (Array.isArray(stringOrArray)) {
+      return stringOrArray.map((s) => String(s).includes(' ') ? `"${s}"` : String(s));
+    }
+    const r = Utils.lazyQuotes([stringOrArray]);
+    return r[0];
+  }
+
+  /**
    * @param {string} binPath
    * @param {string[]} args
    * @param {object} options
@@ -268,10 +282,8 @@ class Utils {
       options.shell = true;
 
       // quote command and args containing spaces for cmd.exe
-      if (binPath.includes(' ')) {
-        binPath = `"${binPath}"`;
-      }
-      args = args.map(a => String(a).includes(' ') ? `"${a}"` : String(a));
+      binPath = Utils.lazyQuotes(binPath);
+      args = Utils.lazyQuotes(args);
     }
     return Child.spawn(binPath, args, options);
   }
@@ -308,15 +320,9 @@ class Utils {
       // workaround for https://github.com/nodejs/node/issues/52554
       if (process.platform === 'win32') {
         options.shell = true;
-        if (command.includes(' ')) {
-          // if the command contains spaces, it must be quoted to be properly parsed by the shell
-          command = `"${command}"`;
-        }
-        // quote any args that contain spaces so they are properly parsed by cmd.exe
-        args = args.map(arg => {
-          arg = String(arg);
-          return arg.includes(' ') ? `"${arg}"` : arg;
-        });
+        // quote command and args containing spaces for cmd.exe
+        command = Utils.lazyQuotes(command);
+        args = Utils.lazyQuotes(args);
       }
       const child = Child.spawn(command, args, options);
 
