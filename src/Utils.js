@@ -249,6 +249,20 @@ class Utils {
   }
 
   /**
+   * For strings or string arrays.
+   * Quote strings that contain spaces.
+   * @param {string|string[]} stringOrArray
+   * @returns {string|string[]}
+   */
+  static lazyQuotes(stringOrArray) {
+    if (Array.isArray(stringOrArray)) {
+      return stringOrArray.map((s) => String(s).includes(' ') ? `"${s}"` : String(s));
+    }
+    const r = Utils.lazyQuotes([stringOrArray]);
+    return r[0];
+  }
+
+  /**
    * @param {string} binPath
    * @param {string[]} args
    * @param {object} options
@@ -256,22 +270,20 @@ class Utils {
    * @returns {ChildProcess}
    */
   static spawn(binPath, args, options, hideWindowsConsole) {
-    if (process.platform === 'win32' && hideWindowsConsole) {
-      /*
-       * alternative method: generate a patched version of node
-       * - https://github.com/nodejs/node/issues/556#issuecomment-271066690
-       * - https://github.com/ukoloff/nvms/blob/master/src/tools/nodew.coffee
-       */
-
-      args = [RUN_VBS, binPath].concat(args);
-
-      // "wscript.exe": window application
-      // "cscript.exe": console application
-      binPath = 'wscript.exe';
-    }
-    // workaround for https://github.com/nodejs/node/issues/52554
     if (process.platform === 'win32') {
+      if (hideWindowsConsole) {
+        // Use wscript.exe to hide the terminal console window
+        // https://github.com/nodejs/node/issues/556#issuecomment-271066690
+        args = [RUN_VBS, binPath].concat(args);
+        binPath = 'wscript.exe';
+      }
+
+      // workaround for https://github.com/nodejs/node/issues/52554
       options.shell = true;
+
+      // quote command and args containing spaces for cmd.exe
+      binPath = Utils.lazyQuotes(binPath);
+      args = Utils.lazyQuotes(args);
     }
     return Child.spawn(binPath, args, options);
   }
@@ -308,6 +320,9 @@ class Utils {
       // workaround for https://github.com/nodejs/node/issues/52554
       if (process.platform === 'win32') {
         options.shell = true;
+        // quote command and args containing spaces for cmd.exe
+        command = Utils.lazyQuotes(command);
+        args = Utils.lazyQuotes(args);
       }
       const child = Child.spawn(command, args, options);
 
