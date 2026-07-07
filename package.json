@@ -1,5 +1,5 @@
 {
-  "name": "pattypm",
+  "name": "@linkurious/pattypm",
   "description": "A truly cross-platform process manager",
   "repository": {
     "type": "git",
@@ -23,8 +23,11 @@
   ],
   "main": "./src/Patty.js",
   "license": "MIT",
-  "version": "1.0.38",
+  "version": "1.0.39",
   "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=18.0.0"
   },
