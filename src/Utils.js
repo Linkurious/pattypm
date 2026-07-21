@@ -570,7 +570,7 @@ class Utils {
    * @return void
    */
   static removeSync(filePath) {
-    fs.rmSync(filePath);
+    fs.rmSync(filePath, {recursive: true});
   }
 
   /**
