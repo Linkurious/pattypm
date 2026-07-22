@@ -90,8 +90,8 @@ const TestUtils = {
 
   cleanUp: (configFilePath) => {
     try {
-      fs.rmSync(path.resolve(__dirname, 'logs'));
-      fs.rmSync(configFilePath);
+      Utils.removeSync(path.resolve(__dirname, 'logs'));
+      Utils.removeSync(configFilePath);
     } catch(e) {
       // no op
     }
