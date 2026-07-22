@@ -23,7 +23,7 @@
   ],
   "main": "./src/Patty.js",
   "license": "MIT",
-  "version": "1.0.40",
+  "version": "1.0.41",
   "private": false,
   "publishConfig": {
     "access": "public"
