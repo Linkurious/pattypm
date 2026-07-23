@@ -565,15 +565,6 @@ class Utils {
   }
 
   /**
-   * Remove a file
-   * @param filePath
-   * @return void
-   */
-  static removeSync(filePath) {
-    fs.rmSync(filePath, {recursive: true});
-  }
-
-  /**
    * Returns a promise resolved in `ms` milliseconds.
    * @param ms
    * @returns {Promise<void>}

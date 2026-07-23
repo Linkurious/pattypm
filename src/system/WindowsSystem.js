@@ -205,8 +205,8 @@ class WindowsSystem extends System {
    * @private
    */
   _deleteDaemon() {
-    Utils.removeSync(this._daemonPath);
-    return Promise.resolve();
+    return WindowsSystem.runElevated('cmd.exe', ['/c', 'rmdir', '/s', '/q', this._daemonPath])
+      .then(() => Utils.resolveIn(1000));
   }
 
   /**
